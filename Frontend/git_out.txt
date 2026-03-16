@@ -1,0 +1,26 @@
+﻿git : To https://github
+.com/saurabh85k/FarmSyn
+c123.git
+At line:1 char:59
++ ... 
+ext.Encoding]::UTF8; 
+git push -u origin 
+frontend-saurabh 2>&1 
+| Out-F ...
++                      
+    ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (To https://gi   
+ th...FarmSync123.g    
+it:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+ * [new branch]      
+frontend-saurabh -> 
+frontend-saurabh
+branch 'frontend-saurabh' set up to track 'origin/frontend-saurabh'.
