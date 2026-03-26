@@ -1,6 +1,7 @@
 package org.infyntrek.farmsync.config;
 
 import java.util.List;
+import org.infyntrek.farmsync.security.ApiKeyAuthenticationFilter;
 import org.infyntrek.farmsync.security.JwtAuthenticationFilter;
 import org.infyntrek.farmsync.security.RestAccessDeniedHandler;
 import org.infyntrek.farmsync.security.RestAuthenticationEntryPoint;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
+            ApiKeyAuthenticationFilter apiKeyAuthFilter,
             JwtAuthenticationFilter jwtAuthFilter,
             AuthenticationProvider authenticationProvider,
             RestAuthenticationEntryPoint authenticationEntryPoint,
@@ -47,12 +49,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/admin/health").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
+                .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

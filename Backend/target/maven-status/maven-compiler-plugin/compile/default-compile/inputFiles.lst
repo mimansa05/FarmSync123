@@ -1,5 +1,6 @@
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\config\ApplicationConfig.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\config\SecurityConfig.java
+C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\config\SwaggerConfig.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\controller\AdminController.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\controller\AuthController.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\controller\UserController.java
@@ -15,6 +16,8 @@ C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\exceptio
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\exception\ResourceNotFoundException.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\FarmSyncCropExpenseTrackerApplication.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\repository\UserRepository.java
+C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\security\ApiKeyAuthenticationFilter.java
+C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\security\ApiKeyService.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\security\JwtAuthenticationFilter.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\security\JwtService.java
 C:\Users\Admin\FarmSync123\Backend\src\main\java\org\infyntrek\farmsync\security\RestAccessDeniedHandler.java
