@@ -72,6 +72,7 @@ Profit estimation
 Step 4 — Analyze Data
 
 Graphs help users understand:
+![iamge alt](https://github.com/saurabh85k/FarmSync123/blob/7a0e29df864b68a4aaad377dd185b103cdf0b2c1/pie4.jpeg)
 
 Expense distribution
 Crop performance
