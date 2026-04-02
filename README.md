@@ -37,7 +37,7 @@ It provides a simple dashboard to view insights, manage records, and improve dec
 #Maven
 #Database
 
-![image alt]()
+![image alt](https://github.com/saurabh85k/FarmSync123/blob/1ef2b07877ee938eb0c55de584e8fc53234c9c2a/screen6.jpeg)
 
  🚨 The Problem
 
