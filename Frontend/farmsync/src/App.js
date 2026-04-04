@@ -9,11 +9,16 @@ import Activities from './pages/Actitivities';
 import Reports from './pages/Reports';
 import Weather from './pages/Weather';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import Register from './pages/Registration';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="crops" element={<Crops />} />
