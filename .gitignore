@@ -1,0 +1,20 @@
+# Maven build output 
+Backend/target/
+
+# Environment files 
+Frontend/farmsync/.env
+.env
+
+# Node modules
+Frontend/farmsync/node_modules/
+
+# React build output
+Frontend/farmsync/build/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.sts4-cache
