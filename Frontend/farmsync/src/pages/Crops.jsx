@@ -140,68 +140,94 @@ const Crops = () => {
           </div>
         )}
 
-        {/* --- Search & Filter Controls --- */}
-        <div className="mt-6 grid gap-3 lg:grid-cols-[2fr_1fr_auto]">
-          <label className="block">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search crops..."
-              className="app-input"
-            />
-          </label>
+        {/* --- Unified Management Controls --- */}
+        <div className="mt-8">
+          <form 
+            onSubmit={addCrop} 
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1.2fr_0.8fr_1.2fr_0.8fr_1fr_1fr_auto] items-end"
+          >
+            {/* Search Part (Functional siblings, though inside form for layout) */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Search crops</label>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name..."
+                className="app-input"
+              />
+            </div>
 
-          <label className="block">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="app-select"
-            >
-              <option value="All">All Seasons</option>
-              <option value="Rabi">Rabi</option>
-              <option value="Kharif">Kharif</option>
-              <option value="Summer">Summer</option>
-              <option value="Annual">Annual</option>
-            </select>
-          </label>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Filter Season</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="app-select"
+              >
+                <option value="All">All Seasons</option>
+                <option value="Rabi">Rabi</option>
+                <option value="Kharif">Kharif</option>
+                <option value="Summer">Summer</option>
+                <option value="Annual">Annual</option>
+              </select>
+            </div>
 
-          {/* --- Quick Add Form --- */}
-          <form onSubmit={addCrop} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <input
-              placeholder="Crop name"
-              value={form.cropName}
-              onChange={(e) => setForm({ ...form, cropName: e.target.value })}
-              className="app-input"
-              required
-            />
-            <select
-              value={form.season}
-              onChange={(e) => setForm({ ...form, season: e.target.value })}
-              className="app-select"
-              required
+            {/* Quick Add Fields */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-emerald-500/80 ml-1">Crop Name</label>
+              <input
+                placeholder="e.g. Wheat"
+                value={form.cropName}
+                onChange={(e) => setForm({ ...form, cropName: e.target.value })}
+                className="app-input"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-emerald-500/80 ml-1">Season</label>
+              <select
+                value={form.season}
+                onChange={(e) => setForm({ ...form, season: e.target.value })}
+                className="app-select"
+                required
+              >
+                <option value="">Select</option>
+                <option value="Rabi">Rabi</option>
+                <option value="Kharif">Kharif</option>
+                <option value="Summer">Summer</option>
+                <option value="Annual">Annual</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-emerald-500/80 ml-1">Sowing Date</label>
+              <input
+                type="date"
+                value={form.sowingDate}
+                onChange={(e) => setForm({ ...form, sowingDate: e.target.value })}
+                className="app-input"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-emerald-500/80 ml-1">Est. Harvest</label>
+              <input
+                type="date"
+                value={form.expectedHarvest}
+                onChange={(e) => setForm({ ...form, expectedHarvest: e.target.value })}
+                className="app-input"
+                required
+              />
+            </div>
+
+            <button 
+              className="app-button-secondary h-[44px] px-8 sm:col-span-2 lg:col-span-1" 
+              type="submit" 
+              disabled={adding}
             >
-              <option value="">Season</option>
-              <option value="Rabi">Rabi</option>
-              <option value="Kharif">Kharif</option>
-              <option value="Summer">Summer</option>
-              <option value="Annual">Annual</option>
-            </select>
-            <input
-              type="date"
-              value={form.sowingDate}
-              onChange={(e) => setForm({ ...form, sowingDate: e.target.value })}
-              className="app-input"
-              required
-            />
-            <input
-              type="date"
-              value={form.expectedHarvest}
-              onChange={(e) => setForm({ ...form, expectedHarvest: e.target.value })}
-              className="app-input"
-              required
-            />
-            <button className="app-button-secondary sm:col-span-2 lg:col-span-4" type="submit" disabled={adding}>
               {adding ? 'Adding...' : 'Quick Add'}
             </button>
           </form>

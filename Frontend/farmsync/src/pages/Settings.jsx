@@ -62,23 +62,37 @@ const Settings = () => {
             <FaUser className="text-emerald-300" />
             <h2 className="text-2xl font-semibold text-white">Profile</h2>
           </div>
-          <div className="grid gap-4">
-            <div className="grid gap-3 md:grid-cols-2">
-              <input className="app-input" defaultValue="Farmer" placeholder="Display name" readOnly />
-              <input className="app-input" defaultValue="farmer@farmsync.com" placeholder="Email" readOnly />
+          <div className="grid gap-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Display Name</label>
+                <input className="app-input" defaultValue="Farmer" placeholder="Display name" readOnly />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Email Address</label>
+                <input className="app-input" defaultValue="farmer@farmsync.com" placeholder="Email" readOnly />
+              </div>
             </div>
-            <input 
-              className="app-input" 
-              value={farmData.farmName} 
-              onChange={(e) => setFarmData({ ...farmData, farmName: e.target.value })}
-              placeholder="Farm name" 
-            />
-            <input 
-              className="app-input" 
-              value={farmData.location} 
-              onChange={(e) => setFarmData({ ...farmData, location: e.target.value })}
-              placeholder="Location (e.g. North Valley)" 
-            />
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Farm Name</label>
+              <input 
+                className="app-input" 
+                value={farmData.farmName} 
+                onChange={(e) => setFarmData({ ...farmData, farmName: e.target.value })}
+                placeholder="Farm name" 
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Location</label>
+              <input 
+                className="app-input" 
+                value={farmData.location} 
+                onChange={(e) => setFarmData({ ...farmData, location: e.target.value })}
+                placeholder="Location (e.g. North Valley)" 
+              />
+            </div>
             
             <button 
               onClick={handleSave}
