@@ -3,6 +3,10 @@ import { FaBell, FaChevronDown, FaSearch, FaSignOutAlt } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+/**
+ * Global Search Configuration
+ * Defines searchable navigation items throughout the application.
+ */
 const searchItems = [
   { label: 'Dashboard', keywords: ['dashboard', 'home', 'overview'], route: '/' },
   { label: 'Crop Overview', keywords: ['crop overview', 'chart', 'growth'], route: '/', hash: '#crop-overview' },
@@ -18,15 +22,32 @@ const searchItems = [
   { label: 'Settings', keywords: ['settings', 'profile', 'notifications'], route: '/settings' },
 ];
 
+/**
+ * Header Component
+ * 
+ * The top navigation bar containing global search, notification alerts,
+ * and user profile/account settings.
+ * 
+ * @returns {JSX.Element} The rendered Header component
+ */
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { auth, logout } = useAuth();
 
+  /** @type {string} Current value of the search input bar */
   const [query, setQuery] = useState('');
+
+  /** @type {boolean} Toggle for showing the real-time search results dropdown */
   const [showResults, setShowResults] = useState(false);
+
+  /** @type {boolean} Toggle for showing the user account menu */
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  /**
+   * useMemo - Search Result Filtering
+   * Filters the searchItems based on the current query string.
+   */
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return searchItems.slice(0, 5);
@@ -36,6 +57,12 @@ const Header = () => {
     });
   }, [query]);
 
+  /**
+   * Navigates to a specific search result item.
+   * Handles both internal routing and intra-page hash navigation.
+   * 
+   * @param {Object} item - The search result item to navigate to
+   */
   const goToItem = (item) => {
     setQuery(item.label);
     setShowResults(false);
@@ -53,12 +80,18 @@ const Header = () => {
     navigate(`${item.route}${item.hash || ''}`);
   };
 
+  /**
+   * Handles form submission for the search bar, navigating to the primary result.
+   */
   const onSubmit = (event) => {
     event.preventDefault();
     const match = results[0];
     if (match) goToItem(match);
   };
 
+  /**
+   * Clears session data and redirects the user to the login page.
+   */
   const handleLogout = () => {
     setShowUserMenu(false);
     logout();
@@ -67,12 +100,11 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-20 flex w-full items-center justify-between bg-transparent px-4 py-4 backdrop-blur-sm md:px-6 xl:px-7">
-
-      {/* Search bar */}
+      {/* Search bar section */}
       <div className="relative w-full max-w-[420px]">
         <form
           onSubmit={onSubmit}
-          className="flex w-full items-center rounded-2xl border border-farm-border/50 bg-farm-card/60 px-4 py-2.5 text-sm transition-colors focus-within:border-farm-accent/50"
+          className="flex w-full items-center rounded-2xl border border-white/8 bg-white/4 px-4 py-2.5 text-sm transition-colors focus-within:border-emerald-500/50"
         >
           <FaSearch className="mr-3 text-gray-400" />
           <input
@@ -92,7 +124,7 @@ const Header = () => {
         </form>
 
         {showResults && results.length > 0 && (
-          <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-30 overflow-hidden rounded-2xl border border-white/8 bg-[#101814]/95 p-2 shadow-[0_24px_48px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+          <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-30 overflow-hidden rounded-2xl border border-white/8 bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
             {results.slice(0, 6).map((item) => (
               <button
                 key={`${item.route}-${item.label}`}
@@ -110,27 +142,24 @@ const Header = () => {
         )}
       </div>
 
-      {/* Right side */}
+      {/* Right side controls */}
       <div className="ml-4 flex items-center gap-5 text-gray-300">
-
-        {/* Notification bell */}
         <button
           type="button"
           onClick={() => navigate('/notifications')}
           className="relative rounded-2xl border border-white/8 bg-white/4 p-3 transition-colors hover:text-white"
         >
           <FaBell className="text-lg" />
-          <span className="absolute right-0 top-0 block h-2 w-2 rounded-full bg-farm-accent ring-2 ring-farm-bg" />
+          <span className="absolute right-0 top-0 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-transparent" />
         </button>
 
-        {/* User menu */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowUserMenu((prev) => !prev)}
             className="group flex items-center gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2.5"
           >
-            <div className="h-10 w-10 overflow-hidden rounded-full border border-farm-border bg-gray-800">
+            <div className="h-10 w-10 overflow-hidden rounded-full border border-white/10 bg-gray-800">
               <img
                 src="https://i.pravatar.cc/150?img=11"
                 alt="Farmer Profile"
@@ -138,10 +167,9 @@ const Header = () => {
               />
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-xs text-gray-400 group-hover:text-gray-300">
-                Welcome back,
+              <span className="text-[10px] uppercase tracking-wider text-gray-400 group-hover:text-gray-300">
+                Welcome back
               </span>
-              {/* Show real name from JWT */}
               <span className="text-sm font-semibold text-white">
                 {auth?.user?.name || 'Farmer'}
               </span>
@@ -153,24 +181,20 @@ const Header = () => {
             />
           </button>
 
-          {/* Dropdown menu */}
           {showUserMenu && (
-            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-48 overflow-hidden rounded-2xl border border-white/8 bg-[#101814]/95 p-2 shadow-[0_24px_48px_rgba(0,0,0,0.32)] backdrop-blur-xl">
-
-              {/* User info */}
-              <div className="border-b border-white/8 px-3 py-2 mb-2">
-                <p className="text-sm font-medium text-white">
+            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-56 overflow-hidden rounded-2xl border border-white/8 bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
+              <div className="border-b border-white/8 px-3 py-3 mb-2">
+                <p className="text-sm font-semibold text-white">
                   {auth?.user?.name}
                 </p>
-                <p className="text-xs text-slate-400 truncate">
+                <p className="text-xs text-slate-400 truncate mt-1">
                   {auth?.user?.email}
                 </p>
-                <span className="mt-1 inline-block rounded-full bg-emerald-400/15 px-2 py-0.5 text-xs text-emerald-300">
+                <span className="mt-2 inline-block rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
                   {auth?.user?.role}
                 </span>
               </div>
 
-              {/* Settings link */}
               <button
                 type="button"
                 onClick={() => {
@@ -182,7 +206,6 @@ const Header = () => {
                 Settings
               </button>
 
-              {/* Logout */}
               <button
                 type="button"
                 onClick={handleLogout}
@@ -191,14 +214,13 @@ const Header = () => {
                 <FaSignOutAlt />
                 Logout
               </button>
-
             </div>
           )}
         </div>
-
       </div>
     </header>
   );
 };
 
 export default Header;
+

@@ -3,20 +3,54 @@ import { FaPlus, FaSearch, FaSeedling, FaSlidersH, FaTrash } from 'react-icons/f
 import { createCrop, deleteCrop } from '../api/cropApi';
 import { useFarm } from '../context/FarmContext';
 
+/**
+ * Crops Component
+ * 
+ * Manages the lifecycle of crops in a specific farm.
+ * Provides functionality to view, search, filter, add, and delete crops.
+ * 
+ * @returns {JSX.Element} The rendered Crops management page
+ */
 const Crops = () => {
+  // --- Hooks & Context ---
+
+  /** @type {Object} Farm context for data and operations */
   const { farm, crops, setCrops, refreshCrops, loading } = useFarm();
 
+  /** @type {Object} Local state for the crop creation form */
   const [form, setForm] = useState({ cropName: '', season: '', sowingDate: '', expectedHarvest: '' });
+
+  /** @type {string} Search query for filtering crops by name */
   const [search, setSearch] = useState('');
+
+  /** @type {string} Filter for categorizing crops by season */
   const [statusFilter, setStatusFilter] = useState('All');
+
+  /** @type {string} Error message for feedback */
   const [error, setError] = useState('');
+
+  /** @type {boolean} State to track the asynchronous adding operation */
   const [adding, setAdding] = useState(false);
 
-  // ✅ FIXED HERE
+  // --- Effects ---
+
+  /**
+   * Refreshes the crop list from the API whenever the component mounts
+   * or the refresh function changes.
+   */
   useEffect(() => {
     refreshCrops();
   }, [refreshCrops]);
 
+  // --- Functions / Methods ---
+
+  /**
+   * Persists a new crop to the backend for the current farm.
+   * 
+   * @async
+   * @param {Event} event - The form submission event
+   * @returns {Promise<void>}
+   */
   const addCrop = async (event) => {
     event.preventDefault();
     if (!farm) return;
@@ -25,6 +59,7 @@ const Crops = () => {
     setError('');
 
     try {
+      /** @type {Object} Result of the API call to create a crop */
       const newCrop = await createCrop({
         cropName: form.cropName,
         season: form.season,
@@ -33,6 +68,7 @@ const Crops = () => {
         farmId: farm.farmId,
       });
 
+      // Update local state optimizing for immediate UI feedback
       setCrops((prev) => [newCrop, ...prev]);
       setForm({ cropName: '', season: '', sowingDate: '', expectedHarvest: '' });
     } catch (err) {
@@ -42,19 +78,37 @@ const Crops = () => {
     }
   };
 
+  /**
+   * Removes a crop record from the system.
+   * 
+   * @async
+   * @param {number} id - The unique identifier of the crop to delete
+   * @returns {Promise<void>}
+   */
   const handleDelete = async (id) => {
     try {
       await deleteCrop(id);
+      // Optimistically remove from UI
       setCrops((prev) => prev.filter((c) => c.cropId !== id));
     } catch (err) {
       setError(err.message);
     }
   };
 
+  /**
+   * useMemo - Memoized filtrations
+   * 
+   * Filters the list of crops based on the search string and season filter.
+   * This is memoized to prevent redundant calculations on every render.
+   */
   const filteredCrops = useMemo(() =>
     crops.filter((crop) => {
-      const matchesSearch = crop.cropName?.toLowerCase().includes(search.toLowerCase());
+      // ✅ IMPROVED SEARCH LOGIC: Handles nulls and trims whitespace
+      const normalizedSearch = search.trim().toLowerCase();
+      const matchesSearch = (crop.cropName || '').toLowerCase().includes(normalizedSearch);
+      
       const matchesStatus = statusFilter === 'All' || crop.season === statusFilter;
+      
       return matchesSearch && matchesStatus;
     }),
     [crops, search, statusFilter]
@@ -87,6 +141,7 @@ const Crops = () => {
           </div>
         )}
 
+        {/* --- Search & Filter Controls --- */}
         <div className="mt-6 grid gap-3 lg:grid-cols-[1.35fr_0.8fr_auto]">
           <label className="relative block">
             <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
@@ -106,14 +161,15 @@ const Crops = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="app-select pl-11"
             >
-              <option>All</option>
-              <option>Rabi</option>
-              <option>Kharif</option>
-              <option>Summer</option>
-              <option>Annual</option>
+              <option value="All">All Seasons</option>
+              <option value="Rabi">Rabi</option>
+              <option value="Kharif">Kharif</option>
+              <option value="Summer">Summer</option>
+              <option value="Annual">Annual</option>
             </select>
           </label>
 
+          {/* --- Quick Add Form --- */}
           <form onSubmit={addCrop} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <input
               placeholder="Crop name"
@@ -156,10 +212,11 @@ const Crops = () => {
         </div>
       </section>
 
+      {/* --- Display Grid --- */}
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {filteredCrops.length === 0 ? (
           <div className="col-span-4 py-12 text-center text-slate-400">
-            No crops found. Add your first crop above.
+            No crops found matching these criteria.
           </div>
         ) : (
           filteredCrops.map((crop) => (
@@ -168,14 +225,20 @@ const Crops = () => {
                 <div className="rounded-2xl bg-emerald-500/12 p-3 text-2xl text-emerald-300">
                   <FaSeedling />
                 </div>
-                <button onClick={() => handleDelete(crop.cropId)}>
+                <button 
+                  onClick={() => handleDelete(crop.cropId)}
+                  className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+                  aria-label="Delete crop"
+                >
                   <FaTrash />
                 </button>
               </div>
 
               <div className="mt-5">
-                <h2>{crop.cropName}</h2>
-                <p>{crop.season}</p>
+                <h2 className="text-xl font-bold text-white">{crop.cropName}</h2>
+                <div className="mt-2 inline-block rounded-full bg-white/5 px-3 py-1 text-xs text-emerald-300">
+                  {crop.season}
+                </div>
               </div>
             </article>
           ))
@@ -185,4 +248,4 @@ const Crops = () => {
   );
 };
 
-export default Crops;
+export default Crops;

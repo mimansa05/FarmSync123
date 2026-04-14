@@ -11,6 +11,14 @@ const iconMap = {
   Pesticide:  { icon: <FaSprayCan />,      tone: 'bg-violet-400/15 text-violet-300' },
 };
 
+/**
+ * Activities Component
+ * 
+ * Provides a vertical timeline of all farm-related activities (Watering, Fertilizer, etc.).
+ * Data is aggregated from all crops belonging to the active farm.
+ * 
+ * @returns {JSX.Element} The rendered Activities timeline page
+ */
 const Activities = () => {
   const { crops, loading: farmLoading } = useFarm();
 
@@ -21,19 +29,34 @@ const Activities = () => {
   const [adding, setAdding] = useState(false);
   const [loadingActivities, setLoadingActivities] = useState(false);
 
-  // Load activities for all crops
+  /**
+   * Effect hook to fetch activities for all available crops.
+   * It uses Promise.all to fetch data concurrently for each crop ID.
+   */
   useEffect(() => {
     const fetchAll = async () => {
-      if (!crops || crops.length === 0) return;
+      // Check if crops are loaded before attempting to fetch activities
+      if (!crops || crops.length === 0) {
+        setActivities([]);
+        return;
+      }
 
       setLoadingActivities(true);
       try {
-        const results = await Promise.all(
-          crops.map((crop) => getActivitiesByCrop(crop.cropId))
+        /** @type {Array<Promise>} Array of pending activity fetch requests */
+        const promises = crops.map((crop) => getActivitiesByCrop(crop.cropId));
+        
+        /** @type {Array<Array>} Resolved activity lists for each crop */
+        const results = await Promise.all(promises);
+        
+        // Flatten the array of arrays into a single list and sort by date descending
+        const allActivities = results.flat().sort((a, b) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
         );
-        setActivities(results.flat());
+        
+        setActivities(allActivities);
       } catch (err) {
-        setError(err.message);
+        setError("Failed to load activities: " + err.message);
       } finally {
         setLoadingActivities(false);
       }

@@ -205,3 +205,57 @@ body {
 .app-clickable {
   cursor: pointer;
 }
+
+/* --- Theme Support --- */
+
+/* Light mode styles */
+body.light {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+body.light .app-panel,
+body.light .app-panel-soft {
+  background: white;
+  border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body.light .page-title {
+  color: #0f172a;
+}
+
+body.light .page-subtitle {
+  color: #475569;
+}
+
+body.light .app-input,
+body.light .app-select,
+body.light .app-textarea {
+  background: white;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+body.light .app-input::placeholder,
+body.light .app-textarea::placeholder {
+  color: #94a3b8;
+}
+
+body.light .app-button-secondary {
+  background: white;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+/* --- Dropdown Visibility Fix everywhere --- */
+select.app-select option {
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+body.dark select.app-select option {
+  background-color: #1a1c1e;
+  color: #e2e8f0;
+}
+
