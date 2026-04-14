@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 
 /**
@@ -18,11 +18,14 @@ import html2canvas from 'html2canvas';
  * @param {string} chartId - The HTML ID of the trend chart element to capture
  */
 export const generateFarmReport = async (data, context, chartId) => {
-  const { farmerName, location, yieldGrowth, netMargin, bestCrop, trendData } = data;
+  console.log('PDF Generation Pipeline Started', { data, context, chartId });
+  
+  const { yieldGrowth, netMargin, bestCrop, trendData } = data;
   const doc = new jsPDF('p', 'mm', 'a4');
   const timestamp = new Date().toLocaleString();
 
   // --- Header & Branding ---
+  console.log('Drawing Header...');
   doc.setFillColor(7, 17, 13); // FarmSync Dark Green
   doc.rect(0, 0, 210, 40, 'F');
   
@@ -41,12 +44,12 @@ export const generateFarmReport = async (data, context, chartId) => {
   doc.text(`Location: ${context.location || 'Not set'}`, 145, 27);
 
   // --- Summary Section ---
+  console.log('Drawing Summaries...');
   doc.setTextColor(7, 17, 13);
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text('Executive Summary', 15, 55);
   
-  // Draw summary cards
   const cards = [
     { label: 'Yield Growth', value: yieldGrowth, color: [74, 222, 128] },
     { label: 'Net Margin', value: netMargin, color: [56, 189, 248] },
@@ -55,6 +58,7 @@ export const generateFarmReport = async (data, context, chartId) => {
 
   cards.forEach((card, i) => {
     const x = 15 + (i * 65);
+    doc.setHighlightColor(230, 230, 230);
     doc.setDrawColor(230, 230, 230);
     doc.roundedRect(x, 62, 55, 25, 3, 3, 'D');
     
@@ -68,6 +72,7 @@ export const generateFarmReport = async (data, context, chartId) => {
   });
 
   // --- Performance Trends (Chart Capture) ---
+  console.log(`Searching for chart element: ${chartId}`);
   doc.setTextColor(7, 17, 13);
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
@@ -76,27 +81,32 @@ export const generateFarmReport = async (data, context, chartId) => {
   const chartElement = document.getElementById(chartId);
   if (chartElement) {
     try {
+      console.log('Capturing chart with html2canvas...');
       const canvas = await html2canvas(chartElement, {
         backgroundColor: '#07110d',
-        scale: 2
+        scale: 2,
+        logging: false,
+        useCORS: true
       });
       const imgData = canvas.toDataURL('image/png');
       doc.addImage(imgData, 'PNG', 15, 110, 180, 80);
+      console.log('Chart captured and added to PDF.');
     } catch (error) {
-      console.error('Failed to capture chart:', error);
+      console.warn('Failed to capture chart image, skipping...', error);
       doc.setFontSize(10);
-      doc.setTextColor(200, 0, 0);
-      doc.text('[Chart capture unavailable]', 15, 120);
+      doc.setTextColor(180, 180, 180);
+      doc.text('[Chart visualization summary included in breakdown below]', 15, 120);
     }
   }
 
   // --- Detailed Data Table ---
+  console.log('Generating AutoTable...');
   doc.setFontSize(14);
   doc.setTextColor(7, 17, 13);
-  doc.text('Monthly Breakdown', 15, 205);
+  doc.text('Monthly Breakdown', 15, 202);
 
-  doc.autoTable({
-    startY: 210,
+  autoTable(doc, {
+    startY: 208,
     head: [['Month', 'Yield Score', 'Net Profit (%)']],
     body: trendData.map(d => [d.name, d.yield, d.profit + '%']),
     theme: 'striped',
@@ -110,10 +120,13 @@ export const generateFarmReport = async (data, context, chartId) => {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text(`FarmSync v1.0 - Confidential - Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
+    doc.text(`FarmSync Dashboard Report - Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
   }
 
   // Save the PDF
-  const filename = `FarmSync_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+  console.log('Saving PDF file...');
+  const filename = `FarmSync_Report_${new Date().getTime()}.pdf`;
   doc.save(filename);
+  console.log('PDF Download Dispatched.');
 };
+
