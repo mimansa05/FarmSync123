@@ -70,8 +70,20 @@ export const FarmProvider = ({ children }) => {
     }
   };
 
+  const updateFarmDetails = async (updatedFields) => {
+    if (!farm) return;
+    try {
+      const updatedFarm = await updateFarm(farm.farmId, { ...farm, ...updatedFields });
+      setFarm(updatedFarm);
+      return updatedFarm;
+    } catch (error) {
+      console.error('Failed to update farm:', error);
+      throw error;
+    }
+  };
+
   return (
-    <FarmContext.Provider value={{ farm, crops, setCrops, loading, refreshCrops }}>
+    <FarmContext.Provider value={{ farm, crops, setCrops, loading, refreshCrops, updateFarmDetails }}>
       {children}
     </FarmContext.Provider>
   );

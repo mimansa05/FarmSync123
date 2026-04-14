@@ -3,7 +3,6 @@ import {
   Bar, BarChart, Cell, Pie, PieChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
-import { FaPlus, FaReceipt, FaRegCalendarAlt, FaSearch, FaTrash } from 'react-icons/fa';
 import { createExpense, deleteExpense, getExpensesByCrop } from '../api/ExpenseAPI';
 import { useFarm } from '../context/FarmContext';
 
@@ -147,22 +146,20 @@ const Expenses = () => {
           </div>
         )}
 
-        <div className="mt-6 grid gap-3 lg:grid-cols-[1.2fr_0.7fr_0.7fr]">
-          <label className="relative block">
-            <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <div className="mt-6 grid gap-3 lg:grid-cols-[2fr_1fr_1fr]">
+          <label className="block">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by category"
-              className="app-input pl-11"
+              className="app-input"
             />
           </label>
-          <label className="relative block">
-            <FaRegCalendarAlt className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          <label className="block">
             <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="app-select pl-11"
+              className="app-select"
             >
               <option>All</option>
               <option>This Month</option>
@@ -250,7 +247,6 @@ const Expenses = () => {
             </select>
             <div className="md:col-span-2">
               <button className="app-button-primary" type="submit" disabled={adding}>
-                <FaPlus />
                 {adding ? 'Saving...' : 'Save Expense'}
               </button>
             </div>
@@ -314,12 +310,7 @@ const Expenses = () => {
                 filteredExpenses.map((expense) => (
                   <tr key={expense.expenseId} className="border-b border-white/5 text-sm text-slate-200">
                     <td className="py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-xl bg-emerald-500/12 p-2.5 text-emerald-300">
-                          <FaReceipt />
-                        </div>
-                        <span>{expense.category}</span>
-                      </div>
+                      <span>{expense.category}</span>
                     </td>
                     <td className="py-4 text-slate-400">
                       {crops.find((c) => c.cropId === expense.cropId)?.cropName || `Crop ${expense.cropId}`}
@@ -329,9 +320,9 @@ const Expenses = () => {
                     <td className="py-4 text-right">
                       <button
                         onClick={() => removeExpense(expense.expenseId)}
-                        className="rounded-xl border border-white/8 px-3 py-2 text-slate-400 transition hover:border-red-400/20 hover:bg-red-500/8 hover:text-red-300"
+                        className="rounded-xl border border-white/8 px-4 py-2 text-xs font-semibold text-slate-400 transition hover:border-red-400/20 hover:bg-red-500/8 hover:text-red-300 uppercase"
                       >
-                        <FaTrash />
+                        Delete
                       </button>
                     </td>
                   </tr>

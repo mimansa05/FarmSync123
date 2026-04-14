@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FaCalendarAlt, FaPlus, FaSprayCan, FaTint, FaTractor, FaTrash } from 'react-icons/fa';
-import { GiFertilizerBag } from 'react-icons/gi';
 import { createActivity, deleteActivity, getActivitiesByCrop } from '../api/activityApi';
 import { useFarm } from '../context/FarmContext';
 
 const iconMap = {
-  Watering:   { icon: <FaTint />,          tone: 'bg-sky-400/15 text-sky-300' },
-  Fertilizer: { icon: <GiFertilizerBag />, tone: 'bg-emerald-400/15 text-emerald-300' },
-  Harvest:    { icon: <FaTractor />,       tone: 'bg-amber-400/15 text-amber-300' },
-  Pesticide:  { icon: <FaSprayCan />,      tone: 'bg-violet-400/15 text-violet-300' },
+  Watering:   { tone: 'bg-sky-400/15 text-sky-300' },
+  Fertilizer: { tone: 'bg-emerald-400/15 text-emerald-300' },
+  Harvest:    { tone: 'bg-amber-400/15 text-amber-300' },
+  Pesticide:  { tone: 'bg-violet-400/15 text-violet-300' },
 };
 
 /**
@@ -128,7 +126,7 @@ const Activities = () => {
           </div>
         )}
 
-        <div className="mt-6 grid gap-3 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_3.5fr]">
           <select
             value={range}
             onChange={(e) => setRange(e.target.value)}
@@ -138,7 +136,7 @@ const Activities = () => {
             <option value="Today">Today</option>
           </select>
 
-          <form onSubmit={addActivity} className="grid gap-3 md:grid-cols-5">
+          <form onSubmit={addActivity} className="grid gap-3 sm:grid-cols-2 md:grid-cols-[1fr_1fr_1.5fr_1.2fr_auto]">
             <select
               name="activityType"
               value={form.activityType}
@@ -181,8 +179,7 @@ const Activities = () => {
               className="app-input"
               required
             />
-            <button className="app-button-secondary" type="submit" disabled={adding}>
-              <FaPlus />
+            <button className="app-button-secondary px-6" type="submit" disabled={adding}>
               {adding ? 'Adding...' : 'Add'}
             </button>
           </form>
@@ -191,8 +188,7 @@ const Activities = () => {
 
       {/* Timeline */}
       <section className="app-panel p-6">
-        <div className="mb-5 flex items-center gap-3">
-          <FaCalendarAlt className="text-xl text-emerald-300" />
+        <div className="mb-5">
           <h2 className="text-2xl font-semibold text-white">Activity timeline</h2>
         </div>
 
@@ -208,8 +204,8 @@ const Activities = () => {
 
               return (
                 <article key={activity.activityId} className="relative flex gap-4 pl-12">
-                  <div className={`absolute left-0 top-2 rounded-2xl p-3 text-lg ${itemStyle.tone}`}>
-                    {itemStyle.icon}
+                  <div className={`absolute left-0 top-2 px-2 py-1 text-[10px] font-bold uppercase rounded-md tracking-tighter ${itemStyle.tone}`}>
+                    {activity.activityType.slice(0, 3)}
                   </div>
                   <div className="app-panel-soft app-card-hover w-full p-5">
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -225,9 +221,9 @@ const Activities = () => {
                       </div>
                       <button
                         onClick={() => handleDelete(activity.activityId)}
-                        className="rounded-xl border border-white/8 p-2 text-slate-400 transition hover:border-red-400/20 hover:bg-red-500/8 hover:text-red-300"
+                        className="rounded-xl border border-white/8 px-4 py-2 text-xs font-semibold text-slate-400 transition hover:border-red-400/20 hover:bg-red-500/8 hover:text-red-300 uppercase"
                       >
-                        <FaTrash />
+                        Delete
                       </button>
                     </div>
                     <div className="mt-4 text-sm text-slate-500">{activity.date}</div>
