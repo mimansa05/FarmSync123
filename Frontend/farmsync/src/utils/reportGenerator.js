@@ -20,56 +20,69 @@ import html2canvas from 'html2canvas';
 export const generateFarmReport = async (data, context, chartId) => {
   console.log('PDF Generation Pipeline Started', { data, context, chartId });
   
-  const { yieldGrowth, netMargin, bestCrop, trendData } = data;
+  if (!data || !data.trendData) {
+    throw new Error('Missing essential report data');
+  }
+
+  // Initialize jsPDF
   const doc = new jsPDF('p', 'mm', 'a4');
   const timestamp = new Date().toLocaleString();
 
   // --- Header & Branding ---
-  console.log('Drawing Header...');
-  doc.setFillColor(7, 17, 13); // FarmSync Dark Green
-  doc.rect(0, 0, 210, 40, 'F');
-  
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(24);
-  doc.setFont('helvetica', 'bold');
-  doc.text('FarmSync', 15, 20);
-  
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text('ANALYTICS & INSIGHTS REPORT', 15, 28);
-  
-  doc.setFontSize(9);
-  doc.text(`Generated: ${timestamp}`, 145, 15);
-  doc.text(`Farmer: ${context.farmerName || 'Farmer'}`, 145, 21);
-  doc.text(`Location: ${context.location || 'Not set'}`, 145, 27);
-
-  // --- Summary Section ---
-  console.log('Drawing Summaries...');
-  doc.setTextColor(7, 17, 13);
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Executive Summary', 15, 55);
-  
-  const cards = [
-    { label: 'Yield Growth', value: yieldGrowth, color: [74, 222, 128] },
-    { label: 'Net Margin', value: netMargin, color: [56, 189, 248] },
-    { label: 'Best Crop', value: bestCrop, color: [251, 191, 36] }
-  ];
-
-  cards.forEach((card, i) => {
-    const x = 15 + (i * 65);
-    doc.setHighlightColor(230, 230, 230);
-    doc.setDrawColor(230, 230, 230);
-    doc.roundedRect(x, 62, 55, 25, 3, 3, 'D');
+  try {
+    console.log('Drawing Header...');
+    doc.setFillColor(7, 17, 13); // FarmSync Dark Green
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('FarmSync', 15, 20);
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('ANALYTICS & INSIGHTS REPORT', 15, 28);
     
     doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
-    doc.text(card.label, x + 5, 70);
+    doc.text(`Generated: ${timestamp}`, 145, 15);
+    doc.text(`Farmer: ${context?.farmerName || 'Farmer'}`, 145, 21);
+    doc.text(`Location: ${context?.location || 'Not set'}`, 145, 27);
+  } catch (err) {
+    console.warn('Header rendering failed', err);
+  }
+
+  // --- Summary Section ---
+  try {
+    console.log('Drawing Summaries...');
+    doc.setTextColor(7, 17, 13);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Executive Summary', 15, 55);
     
-    doc.setFontSize(12);
-    doc.setTextColor(card.color[0], card.color[1], card.color[2]);
-    doc.text(card.value, x + 5, 80);
-  });
+    const cards = [
+      { label: 'Yield Growth', value: data.yieldGrowth, color: [74, 222, 128] },
+      { label: 'Net Margin', value: data.netMargin, color: [56, 189, 248] },
+      { label: 'Best Crop', value: data.bestCrop, color: [251, 191, 36] }
+    ];
+
+    cards.forEach((card, i) => {
+      const x = 15 + (i * 65);
+      doc.setDrawColor(230, 230, 230);
+      doc.roundedRect(x, 62, 55, 25, 3, 3, 'D');
+      
+      doc.setFontSize(9);
+      doc.setTextColor(100, 100, 100);
+      doc.text(card.label, x + 5, 70);
+      
+      doc.setFontSize(12);
+      if (card.color) {
+        doc.setTextColor(card.color[0], card.color[1], card.color[2]);
+      }
+      doc.text(card.value || 'N/A', x + 5, 80);
+    });
+  } catch (err) {
+    console.warn('Summary rendering failed', err);
+  }
 
   // --- Performance Trends (Chart Capture) ---
   console.log(`Searching for chart element: ${chartId}`);
@@ -84,35 +97,41 @@ export const generateFarmReport = async (data, context, chartId) => {
       console.log('Capturing chart with html2canvas...');
       const canvas = await html2canvas(chartElement, {
         backgroundColor: '#07110d',
-        scale: 2,
+        scale: 1, // Reduced scale for better compatibility
         logging: false,
-        useCORS: true
+        useCORS: true,
+        allowTaint: true
       });
       const imgData = canvas.toDataURL('image/png');
-      doc.addImage(imgData, 'PNG', 15, 110, 180, 80);
+      doc.addImage(imgData, 'PNG', 15, 112, 180, 75);
       console.log('Chart captured and added to PDF.');
     } catch (error) {
       console.warn('Failed to capture chart image, skipping...', error);
       doc.setFontSize(10);
-      doc.setTextColor(180, 180, 180);
-      doc.text('[Chart visualization summary included in breakdown below]', 15, 120);
+      doc.setTextColor(150, 150, 150);
+      doc.text('[Chart visualization data shown in table below]', 15, 120);
     }
   }
 
   // --- Detailed Data Table ---
-  console.log('Generating AutoTable...');
-  doc.setFontSize(14);
-  doc.setTextColor(7, 17, 13);
-  doc.text('Monthly Breakdown', 15, 202);
+  try {
+    console.log('Generating AutoTable...');
+    doc.setFontSize(14);
+    doc.setTextColor(7, 17, 13);
+    doc.text('Monthly Breakdown', 15, 202);
 
-  autoTable(doc, {
-    startY: 208,
-    head: [['Month', 'Yield Score', 'Net Profit (%)']],
-    body: trendData.map(d => [d.name, d.yield, d.profit + '%']),
-    theme: 'striped',
-    headStyles: { fillColor: [19, 85, 50], textColor: [255, 255, 255] },
-    styles: { fontSize: 9, cellPadding: 4 }
-  });
+    autoTable(doc, {
+      startY: 208,
+      head: [['Month', 'Yield Score', 'Net Profit (%)']],
+      body: data.trendData.map(d => [d.name, d.yield, (d.profit || 0) + '%']),
+      theme: 'striped',
+      headStyles: { fillColor: [19, 85, 50], textColor: [255, 255, 255] },
+      styles: { fontSize: 9, cellPadding: 4 }
+    });
+  } catch (err) {
+    console.warn('Table rendering failed', err);
+    doc.text('Data table could not be rendered.', 15, 215);
+  }
 
   // --- Footer ---
   const pageCount = doc.internal.getNumberOfPages();
@@ -124,9 +143,10 @@ export const generateFarmReport = async (data, context, chartId) => {
   }
 
   // Save the PDF
-  console.log('Saving PDF file...');
-  const filename = `FarmSync_Report_${new Date().getTime()}.pdf`;
+  console.log('Finalizing PDF...');
+  const filename = `FarmSync_Report_${Date.now()}.pdf`;
   doc.save(filename);
   console.log('PDF Download Dispatched.');
 };
+
 
