@@ -12,9 +12,10 @@ const Crops = () => {
   const [error, setError] = useState('');
   const [adding, setAdding] = useState(false);
 
+  // ✅ FIXED HERE
   useEffect(() => {
     refreshCrops();
-  }, []);
+  }, [refreshCrops]);
 
   const addCrop = async (event) => {
     event.preventDefault();
@@ -87,9 +88,8 @@ const Crops = () => {
         )}
 
         <div className="mt-6 grid gap-3 lg:grid-cols-[1.35fr_0.8fr_auto]">
-          {/* Search */}
           <label className="relative block">
-            <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
               type="text"
               value={search}
@@ -99,9 +99,8 @@ const Crops = () => {
             />
           </label>
 
-          {/* Filter */}
           <label className="relative block">
-            <FaSlidersH className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            <FaSlidersH className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -115,7 +114,6 @@ const Crops = () => {
             </select>
           </label>
 
-          {/* Add form */}
           <form onSubmit={addCrop} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <input
               placeholder="Crop name"
@@ -138,7 +136,6 @@ const Crops = () => {
             </select>
             <input
               type="date"
-              placeholder="Sowing date"
               value={form.sowingDate}
               onChange={(e) => setForm({ ...form, sowingDate: e.target.value })}
               className="app-input"
@@ -146,17 +143,12 @@ const Crops = () => {
             />
             <input
               type="date"
-              placeholder="Expected harvest"
               value={form.expectedHarvest}
               onChange={(e) => setForm({ ...form, expectedHarvest: e.target.value })}
               className="app-input"
               required
             />
-            <button
-              className="app-button-secondary sm:col-span-2 lg:col-span-4"
-              type="submit"
-              disabled={adding}
-            >
+            <button className="app-button-secondary sm:col-span-2 lg:col-span-4" type="submit" disabled={adding}>
               <FaPlus />
               {adding ? 'Adding...' : 'Quick Add'}
             </button>
@@ -164,7 +156,6 @@ const Crops = () => {
         </div>
       </section>
 
-      {/* Crop cards */}
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {filteredCrops.length === 0 ? (
           <div className="col-span-4 py-12 text-center text-slate-400">
@@ -173,28 +164,18 @@ const Crops = () => {
         ) : (
           filteredCrops.map((crop) => (
             <article key={crop.cropId} className="app-panel app-card-hover p-5">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between">
                 <div className="rounded-2xl bg-emerald-500/12 p-3 text-2xl text-emerald-300">
                   <FaSeedling />
                 </div>
-                <button
-                  onClick={() => handleDelete(crop.cropId)}
-                  className="rounded-xl border border-white/8 bg-white/4 p-2 text-slate-400 transition hover:border-red-400/20 hover:bg-red-500/8 hover:text-red-300"
-                >
+                <button onClick={() => handleDelete(crop.cropId)}>
                   <FaTrash />
                 </button>
               </div>
 
               <div className="mt-5">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-xl font-semibold text-white">{crop.cropName}</h2>
-                  <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-medium text-emerald-300">
-                    {crop.season}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-slate-400">
-                  Sown: {crop.sowingDate} • Harvest: {crop.expectedHarvest}
-                </p>
+                <h2>{crop.cropName}</h2>
+                <p>{crop.season}</p>
               </div>
             </article>
           ))
