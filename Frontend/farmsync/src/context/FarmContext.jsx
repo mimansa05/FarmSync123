@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { useAuth } from './AuthContext';
-import { createFarm, getMyFarms } from '../api/farmApi';
+import { createFarm, getMyFarms, updateFarm } from '../api/farmApi';
 import { getCropsByFarm } from '../api/cropApi';
 
 const FarmContext = createContext(null);
