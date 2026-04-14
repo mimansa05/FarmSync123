@@ -12,6 +12,9 @@ import Activities from './pages/Actitivities';
 import Reports from './pages/Reports';
 import Weather from './pages/Weather';
 import Settings from './pages/Settings';
+import Notifications from './pages/Notifications';
+import ContactUs from './pages/ContactUs';
+import AiAssistant from './pages/AiAssistant';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -34,6 +37,9 @@ function App() {
               <Route path="reports" element={<Reports />} />
               <Route path="weather" element={<Weather />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="notifications" element={<Notifications />} />
+              <Route path="ai-assistant" element={<AiAssistant />} />
+              <Route path="contact-us" element={<ContactUs />} />
             </Route>
           </Route>
 

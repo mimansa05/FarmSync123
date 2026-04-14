@@ -11,6 +11,7 @@ import {
   FaSprayCanSparkles,
   FaSun,
   FaTractor,
+  FaSeedling,
 } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { GiPlantRoots, GiWheat } from 'react-icons/gi';
@@ -112,8 +113,11 @@ const Dashboard = () => {
             </div>
             <h1 className="max-w-xl text-3xl font-semibold tracking-tight text-white md:text-[3.25rem]">
               Good Morning, <span className="text-emerald-400">Farmer!</span>
-              <span className="ml-2 inline-block text-emerald-400">🌱</span>
             </h1>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
+              <FaSeedling className="text-emerald-300" />
+              Healthy fields, steady growth
+            </div>
             <p className="mt-3 max-w-xl text-sm leading-7 text-slate-200/90 md:text-lg">
               Here&apos;s what&apos;s happening on your farm today. Check your crops, expenses, and activities at a glance.
             </p>
@@ -323,7 +327,7 @@ const Dashboard = () => {
         <button
           id="ai-assistant"
           type="button"
-          onClick={() => navigate('/settings')}
+          onClick={() => navigate('/ai-assistant')}
           className="rounded-[26px] border border-emerald-400/15 bg-[linear-gradient(135deg,rgba(11,61,34,0.9),rgba(14,32,20,0.92))] p-5 text-left shadow-[0_18px_38px_rgba(0,0,0,0.24)] transition hover:border-emerald-300/30"
         >
           <div className="mb-4 flex items-start justify-between gap-3">

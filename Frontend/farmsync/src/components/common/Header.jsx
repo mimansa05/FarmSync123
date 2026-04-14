@@ -7,12 +7,14 @@ const searchItems = [
   { label: 'Dashboard', keywords: ['dashboard', 'home', 'overview'], route: '/' },
   { label: 'Crop Overview', keywords: ['crop overview', 'chart', 'growth'], route: '/', hash: '#crop-overview' },
   { label: 'Recent Activities', keywords: ['recent activities', 'activity', 'timeline'], route: '/', hash: '#recent-activities' },
-  { label: 'AI Farm Assistant', keywords: ['ai', 'assistant', 'suggestion'], route: '/', hash: '#ai-assistant' },
+  { label: 'AI Farm Assistant', keywords: ['ai', 'assistant', 'suggestion'], route: '/ai-assistant' },
   { label: 'Crops', keywords: ['crops', 'crop', 'field'], route: '/crops' },
   { label: 'Expenses', keywords: ['expenses', 'expense', 'spending', 'finance'], route: '/expenses' },
   { label: 'Activities', keywords: ['activities', 'activity', 'log'], route: '/activities' },
   { label: 'Reports', keywords: ['reports', 'analytics', 'trends'], route: '/reports' },
   { label: 'Weather', keywords: ['weather', 'forecast', 'temperature'], route: '/weather' },
+  { label: 'Notifications', keywords: ['notification', 'notifications', 'alerts', 'bell'], route: '/notifications' },
+  { label: 'Contact Us', keywords: ['contact', 'help', 'support'], route: '/contact-us' },
   { label: 'Settings', keywords: ['settings', 'profile', 'notifications'], route: '/settings' },
 ];
 
@@ -114,6 +116,7 @@ const Header = () => {
         {/* Notification bell */}
         <button
           type="button"
+          onClick={() => navigate('/notifications')}
           className="relative rounded-2xl border border-white/8 bg-white/4 p-3 transition-colors hover:text-white"
         >
           <FaBell className="text-lg" />
