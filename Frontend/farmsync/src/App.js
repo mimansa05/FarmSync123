@@ -3,12 +3,13 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './index.css';
 import { AuthProvider } from './context/AuthContext';
 import { FarmProvider } from './context/FarmContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Crops from './pages/Crops';
 import Expenses from './pages/Expenses';
-import Activities from './pages/Actitivities';
+import Activities from './pages/Activities';
 import Reports from './pages/Reports';
 import Weather from './pages/Weather';
 import Settings from './pages/Settings';
@@ -18,10 +19,17 @@ import AiAssistant from './pages/AiAssistant';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
+/**
+ * Main Application Component
+ * 
+ * This is the entry point of the React application. It sets up the routing
+ * and provides global contexts for Authentication, Farm Data, and Theme.
+ */
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
@@ -46,8 +54,9 @@ function App() {
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

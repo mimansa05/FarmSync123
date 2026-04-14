@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
 import { FaBell, FaMoon, FaUser } from 'react-icons/fa';
+import { useTheme } from '../context/ThemeContext';
 
+/**
+ * Settings Component
+ * 
+ * Provides user configuration for profile information, notification preferences,
+ * and global application theme (light/dark mode).
+ * 
+ * @returns {JSX.Element} The rendered Settings page
+ */
 const Settings = () => {
-  const [darkMode, setDarkMode] = useState(true);
+  // --- Context & State ---
+  
+  /** @type {Object} Theme context for global light/dark mode control */
+  const { theme, toggleTheme } = useTheme();
+
+  /** @type {Object} Local state for notification toggles */
   const [notifications, setNotifications] = useState({
     weather: true,
     activity: true,
@@ -11,14 +25,16 @@ const Settings = () => {
 
   return (
     <div className="space-y-5">
+      {/* --- Intro Section --- */}
       <section className="app-panel p-6 md:p-7">
         <div className="micro-label">Preferences</div>
-        <h1 className="page-title mt-2">Settings built with the same compact system</h1>
+        <h1 className="page-title mt-2">Personalize your FarmSync experience</h1>
         <p className="page-subtitle mt-3 max-w-2xl">
-          Clean controls, modern toggles, and consistent spacing for profile, notifications, and theme preferences.
+          Manage your account details, notification alerts, and accessibility settings.
         </p>
       </section>
 
+      {/* --- Profile & Notifications --- */}
       <section className="grid gap-5 xl:grid-cols-[1fr_1fr]">
         <article className="app-panel p-6">
           <div className="mb-5 flex items-center gap-3">
@@ -50,6 +66,7 @@ const Settings = () => {
                   className={`relative h-7 w-12 rounded-full transition ${
                     notifications[item.key] ? 'bg-emerald-500' : 'bg-white/10'
                   }`}
+                  aria-label={`Toggle ${item.label}`}
                 >
                   <span
                     className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
@@ -63,21 +80,23 @@ const Settings = () => {
         </article>
       </section>
 
+      {/* --- Theme Settings --- */}
       <section className="app-panel p-6">
         <div className="mb-5 flex items-center gap-3">
           <FaMoon className="text-emerald-300" />
-          <h2 className="text-2xl font-semibold text-white">Theme</h2>
+          <h2 className="text-2xl font-semibold text-white">Appearance</h2>
         </div>
         <div className="app-panel-soft flex items-center justify-between p-4">
           <div>
             <div className="text-sm font-medium text-white">Dark mode</div>
-            <div className="mt-1 text-sm text-slate-400">Keep the premium dark FarmSync experience enabled.</div>
+            <div className="mt-1 text-sm text-slate-400">Reduce eye strain with a premium dark interface.</div>
           </div>
           <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`relative h-7 w-12 rounded-full transition ${darkMode ? 'bg-emerald-500' : 'bg-white/10'}`}
+            onClick={toggleTheme}
+            className={`relative h-7 w-12 rounded-full transition ${theme === 'dark' ? 'bg-emerald-500' : 'bg-white/10'}`}
+            aria-label="Toggle dark mode"
           >
-            <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${darkMode ? 'left-6' : 'left-1'}`} />
+            <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${theme === 'dark' ? 'left-6' : 'left-1'}`} />
           </button>
         </div>
       </section>
@@ -86,3 +105,4 @@ const Settings = () => {
 };
 
 export default Settings;
+
