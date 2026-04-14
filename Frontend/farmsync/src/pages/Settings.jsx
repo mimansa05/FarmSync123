@@ -1,20 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaBell, FaMoon, FaUser } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
+import { useFarm } from '../context/FarmContext';
 
-/**
- * Settings Component
- * 
- * Provides user configuration for profile information, notification preferences,
- * and global application theme (light/dark mode).
- * 
- * @returns {JSX.Element} The rendered Settings page
- */
 const Settings = () => {
-  // --- Context & State ---
-  
-  /** @type {Object} Theme context for global light/dark mode control */
+  const { farm, updateFarmDetails } = useFarm();
   const { theme, toggleTheme } = useTheme();
+
+  const [farmData, setFarmData] = useState({
+    farmName: farm?.farmName || '',
+    location: farm?.location || '',
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  useEffect(() => {
+    if (farm) {
+      setFarmData({
+        farmName: farm.farmName || '',
+        location: farm.location || '',
+      });
+    }
+  }, [farm]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateFarmDetails(farmData);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   /** @type {Object} Local state for notification toggles */
   const [notifications, setNotifications] = useState({
@@ -41,10 +62,31 @@ const Settings = () => {
             <FaUser className="text-emerald-300" />
             <h2 className="text-2xl font-semibold text-white">Profile</h2>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            <input className="app-input" defaultValue="Farmer" placeholder="Display name" />
-            <input className="app-input" defaultValue="farmer@farmsync.com" placeholder="Email" />
-            <input className="app-input md:col-span-2" defaultValue="Main Farm - North Valley" placeholder="Farm name" />
+          <div className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-2">
+              <input className="app-input" defaultValue="Farmer" placeholder="Display name" readOnly />
+              <input className="app-input" defaultValue="farmer@farmsync.com" placeholder="Email" readOnly />
+            </div>
+            <input 
+              className="app-input" 
+              value={farmData.farmName} 
+              onChange={(e) => setFarmData({ ...farmData, farmName: e.target.value })}
+              placeholder="Farm name" 
+            />
+            <input 
+              className="app-input" 
+              value={farmData.location} 
+              onChange={(e) => setFarmData({ ...farmData, location: e.target.value })}
+              placeholder="Location (e.g. North Valley)" 
+            />
+            
+            <button 
+              onClick={handleSave}
+              disabled={isSaving}
+              className="app-button-primary mt-2"
+            >
+              {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
+            </button>
           </div>
         </article>
 

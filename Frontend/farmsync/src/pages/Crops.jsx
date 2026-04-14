@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FaPlus, FaSearch, FaSeedling, FaSlidersH, FaTrash } from 'react-icons/fa';
 import { createCrop, deleteCrop } from '../api/cropApi';
 import { useFarm } from '../context/FarmContext';
 
@@ -142,24 +141,22 @@ const Crops = () => {
         )}
 
         {/* --- Search & Filter Controls --- */}
-        <div className="mt-6 grid gap-3 lg:grid-cols-[1.35fr_0.8fr_auto]">
-          <label className="relative block">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <div className="mt-6 grid gap-3 lg:grid-cols-[2fr_1fr_auto]">
+          <label className="block">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search crops..."
-              className="app-input pl-11"
+              className="app-input"
             />
           </label>
 
-          <label className="relative block">
-            <FaSlidersH className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          <label className="block">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="app-select pl-11"
+              className="app-select"
             >
               <option value="All">All Seasons</option>
               <option value="Rabi">Rabi</option>
@@ -205,7 +202,6 @@ const Crops = () => {
               required
             />
             <button className="app-button-secondary sm:col-span-2 lg:col-span-4" type="submit" disabled={adding}>
-              <FaPlus />
               {adding ? 'Adding...' : 'Quick Add'}
             </button>
           </form>
@@ -222,23 +218,20 @@ const Crops = () => {
           filteredCrops.map((crop) => (
             <article key={crop.cropId} className="app-panel app-card-hover p-5">
               <div className="flex items-start justify-between">
-                <div className="rounded-2xl bg-emerald-500/12 p-3 text-2xl text-emerald-300">
-                  <FaSeedling />
+                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-300/80">
+                  {crop.season}
                 </div>
                 <button 
                   onClick={() => handleDelete(crop.cropId)}
-                  className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+                  className="text-xs font-medium text-slate-500 hover:text-red-400 transition-colors uppercase"
                   aria-label="Delete crop"
                 >
-                  <FaTrash />
+                  Delete
                 </button>
               </div>
 
-              <div className="mt-5">
+              <div className="mt-4">
                 <h2 className="text-xl font-bold text-white">{crop.cropName}</h2>
-                <div className="mt-2 inline-block rounded-full bg-white/5 px-3 py-1 text-xs text-emerald-300">
-                  {crop.season}
-                </div>
               </div>
             </article>
           ))
