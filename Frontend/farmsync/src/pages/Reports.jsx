@@ -10,7 +10,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { FaArrowUp, FaChartLine, FaDownload, FaSeedling } from 'react-icons/fa';
+import { FaArrowUp, FaChartLine, FaDownload, FaSeedling, FaCheckCircle, FaSpinner } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
+import { useFarm } from '../context/FarmContext';
+import { generateFarmReport } from '../utils/reportGenerator';
 
 const trendData = [
   { name: 'Jan', yield: 34, profit: 18 },
@@ -30,11 +33,68 @@ const cropMix = [
 
 const reportsColors = ['#4ade80', '#38bdf8', '#fbbf24', '#a78bfa'];
 
+/**
+ * Reports Component
+ * 
+ * Provides in-depth analytics including yield trends, crop mix distributions,
+ * and automated PDF report generation for farm management.
+ */
 const Reports = () => {
+  // --- Context & State ---
+  const { auth } = useAuth();
+  const { farm } = useFarm();
   const [filter, setFilter] = useState('Monthly');
+  
+  /** @type {boolean} State to track PDF generation progress */
+  const [isExporting, setIsExporting] = useState(false);
+  
+  /** @type {boolean} State to show temporary success feedback */
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // --- KPI Data ---
+  const kpis = [
+    { title: 'Yield Growth', value: '+18.4%', tone: 'text-emerald-300' },
+    { title: 'Net Margin', value: '+12.1%', tone: 'text-sky-300' },
+    { title: 'Best Crop', value: 'Wheat', tone: 'text-amber-300' },
+  ];
+
+  /**
+   * Handles the professional export of farm data to a downloadable PDF.
+   * Utilizes the generateFarmReport utility with html2canvas support.
+   */
+  const handleExportReport = async () => {
+    try {
+      setIsExporting(true);
+      
+      const reportData = {
+        yieldGrowth: kpis[0].value,
+        netMargin: kpis[1].value,
+        bestCrop: kpis[2].value,
+        trendData: trendData
+      };
+
+      const context = {
+        farmerName: auth?.user?.name,
+        location: farm?.location || 'Main Field'
+      };
+
+      // Trigger the PDF generation
+      await generateFarmReport(reportData, context, 'trend-chart-container');
+      
+      // Success feedback
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 4000);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to generate report. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="space-y-5">
+      {/* --- Intro Section & Controls --- */}
       <section className="app-panel p-6 md:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -44,26 +104,37 @@ const Reports = () => {
               Keep trends, crop mix, and insight cards in one compact analytics dashboard without changing the core app layout.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <select value={filter} onChange={(event) => setFilter(event.target.value)} className="app-select min-w-[150px]">
+          <div className="flex flex-wrap items-center gap-3">
+            {showSuccess && (
+              <div className="flex items-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2 text-sm font-medium text-emerald-400 animate-in fade-in slide-in-from-right-4">
+                <FaCheckCircle />
+                Report Downloaded!
+              </div>
+            )}
+            <select 
+              value={filter} 
+              onChange={(event) => setFilter(event.target.value)} 
+              className="app-select min-w-[150px]"
+            >
               <option>Monthly</option>
               <option>Quarterly</option>
               <option>Yearly</option>
             </select>
-            <button className="app-button-primary">
-              <FaDownload />
-              Export Report
+            <button 
+              onClick={handleExportReport}
+              disabled={isExporting}
+              className={`app-button-primary flex items-center gap-2 ${isExporting ? 'opacity-70 grayscale' : ''}`}
+            >
+              {isExporting ? <FaSpinner className="animate-spin" /> : <FaDownload />}
+              {isExporting ? 'Generating...' : 'Export Report'}
             </button>
           </div>
         </div>
       </section>
 
+      {/* --- KPI Cards --- */}
       <section className="grid gap-4 md:grid-cols-3">
-        {[
-          { title: 'Yield Growth', value: '+18.4%', tone: 'text-emerald-300' },
-          { title: 'Net Margin', value: '+12.1%', tone: 'text-sky-300' },
-          { title: 'Best Crop', value: 'Wheat', tone: 'text-amber-300' },
-        ].map((item) => (
+        {kpis.map((item) => (
           <article key={item.title} className="app-panel app-card-hover p-5">
             <div className="text-sm text-slate-400">{item.title}</div>
             <div className={`mt-3 text-3xl font-semibold tracking-tight ${item.tone}`}>{item.value}</div>
@@ -71,8 +142,10 @@ const Reports = () => {
         ))}
       </section>
 
+      {/* --- Visual Trends & Mix --- */}
       <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
-        <article className="app-panel p-6">
+        <article id="trend-chart-container" className="app-panel p-6">
+
           <div className="mb-5 flex items-center gap-3">
             <FaChartLine className="text-emerald-300" />
             <h2 className="text-2xl font-semibold text-white">Performance trends</h2>
