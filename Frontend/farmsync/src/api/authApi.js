@@ -32,3 +32,36 @@ export const registerApi = async (name, email, password, phone) => {
 
   return data; // AuthResponse
 };
+
+export const sendOtpApi = async (email) => {
+  const response = await fetch(`${BASE_URL}/api/auth/send-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Failed to send OTP');
+  }
+
+  return data;
+};
+
+export const verifyOtpApi = async (email, otp) => {
+  const response = await fetch(`${BASE_URL}/api/auth/verify-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'OTP verification failed');
+  }
+
+  return data;
+};
+
