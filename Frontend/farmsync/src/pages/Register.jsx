@@ -1,27 +1,72 @@
 import React, { useState } from 'react';
-import { FaLeaf, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaLeaf, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { registerApi } from '../api/authApi';
+import { registerApi, sendOtpApi, verifyOtpApi } from '../api/authApi';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' });
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [verified, setVerified] = useState(false);
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    if (!form.email) return setError('Please enter your email');
+    
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      await sendOtpApi(form.email);
+      setOtpSent(true);
+      setSuccess('OTP sent successfully to your email!');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (!otp) return setError('Please enter the OTP');
+
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      await verifyOtpApi(form.email, otp);
+      setVerified(true);
+      setSuccess('Email verified successfully!');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!verified) return setError('Please verify your email first');
+    
     setLoading(true);
     setError('');
 
     try {
       const data = await registerApi(form.name, form.email, form.password, form.phone);
+      setSuccess('Registration successful!');
       login(data);     // auto-login after register
-      navigate('/');   // go straight to dashboard
+      setTimeout(() => navigate('/'), 1500);   // go to dashboard after a brief delay
     } catch (err) {
       setError(err.message);
     } finally {
@@ -50,67 +95,108 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-
-          <div>
-            <label className="micro-label">Full Name</label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="app-input mt-1"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              required
-            />
+        {success && (
+          <div className="mb-4 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300 flex items-center gap-2">
+            <FaCheckCircle /> {success}
           </div>
+        )}
 
+        <form onSubmit={verified ? handleSubmit : (otpSent ? handleVerifyOtp : handleSendOtp)} className="space-y-4">
+
+          {/* STEP 1: Email Input */}
           <div>
             <label className="micro-label">Email</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="app-input mt-1"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              required
-            />
+            <div className="relative">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className={`app-input mt-1 ${verified ? 'border-emerald-500/50 bg-emerald-500/5 text-emerald-200' : ''}`}
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+                disabled={otpSent || loading}
+              />
+              {verified && (
+                <FaCheckCircle className="absolute right-3 top-4 text-emerald-400" />
+              )}
+            </div>
           </div>
 
-          <div>
-            <label className="micro-label">Phone Number</label>
-            <input
-              type="tel"
-              placeholder="Enter 10-digit phone number"
-              className="app-input mt-1"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </div>
+          {/* STEP 2: OTP Input */}
+          {otpSent && !verified && (
+            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <label className="micro-label">Enter OTP</label>
+              <input
+                type="text"
+                placeholder="Enter 6-digit OTP"
+                className="app-input mt-1"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+                maxLength={6}
+                disabled={loading}
+              />
+              <p className="text-[10px] text-slate-500 mt-1 cursor-pointer hover:text-emerald-400" onClick={() => { setOtpSent(false); setOtp(''); }}>
+                Wrong email? Change it
+              </p>
+            </div>
+          )}
 
-          <div className="relative">
-            <label className="micro-label">Password</label>
-            <input
-              type={show ? 'text' : 'password'}
-              placeholder="Create password (min 6 characters)"
-              className="app-input mt-1 pr-10"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              required
-            />
-            <span
-              onClick={() => setShow(!show)}
-              className="absolute right-3 top-10 cursor-pointer text-slate-400 hover:text-white"
-            >
-              {show ? <FaEyeSlash /> : <FaEye />}
-            </span>
-          </div>
+          {/* STEP 3: Full Registration Form */}
+          {verified && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div>
+                <label className="micro-label">Full Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  className="app-input mt-1"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="micro-label">Phone Number</label>
+                <input
+                  type="tel"
+                  placeholder="Enter 10-digit phone number"
+                  className="app-input mt-1"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+              </div>
+
+              <div className="relative">
+                <label className="micro-label">Password</label>
+                <input
+                  type={show ? 'text' : 'password'}
+                  placeholder="Create password (min 6 characters)"
+                  className="app-input mt-1 pr-10"
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required
+                />
+                <span
+                  onClick={() => setShow(!show)}
+                  className="absolute right-3 top-10 cursor-pointer text-slate-400 hover:text-white"
+                >
+                  {show ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+            </div>
+          )}
 
           <button
             className="app-button-primary w-full mt-3"
             type="submit"
             disabled={loading}
           >
-            {loading ? 'Creating account...' : 'Register'}
+            {loading 
+              ? (verified ? 'Creating account...' : (otpSent ? 'Verifying...' : 'Sending OTP...')) 
+              : (verified ? 'Register' : (otpSent ? 'Verify OTP' : 'Send OTP'))
+            }
           </button>
 
         </form>
@@ -130,4 +216,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Register;

@@ -1,6 +1,7 @@
 package org.infyntrek.farmsync.service.impl;
 
 import java.util.Map;
+
 import org.infyntrek.farmsync.dto.AuthRequest;
 import org.infyntrek.farmsync.dto.AuthResponse;
 import org.infyntrek.farmsync.dto.RegisterRequest;
@@ -17,7 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Handles signup and login while keeping JWT creation outside the controller layer.
+ * Handles signup and login with enforced email verification via OTP.
+ *
+ * Registration flow:
+ * 1. Client must verify email via OTP
+ * 2. Only verified emails are allowed to register
+ * 3. After successful signup, verification flag is cleared (one-time use)
  */
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -26,38 +32,54 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final OtpService otpService;   // <-- added
 
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            OtpService otpService            // <-- added
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.otpService = otpService;
     }
 
     /**
-     * Creates a new USER account, stores a BCrypt password hash, and returns a JWT.
+     * Creates a new USER account after verifying email via OTP.
      */
     @Override
     public AuthResponse register(RegisterRequest request) {
+
+        // Step 1: enforce OTP verification
+        if (!otpService.isVerified(request.getEmail())) {
+            throw new IllegalStateException("Email not verified");
+        }
+
+        // Step 2: prevent duplicate accounts
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Email is already registered");
         }
 
+        // Step 3: create user
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .phone(request.getPhone())   // new
+                .phone(request.getPhone())
                 .role(Role.USER)
                 .build();
 
         User savedUser = userRepository.save(user);
+
+        // Step 4: generate JWT
         String jwtToken = jwtService.generateToken(buildClaims(savedUser), savedUser);
+
+        // Step 5: clear verification flag (one-time use)
+        otpService.removeVerified(request.getEmail());
 
         return buildAuthResponse(savedUser, jwtToken);
     }
@@ -79,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * Adds useful identity claims to the token for downstream consumers.
+     * Adds identity claims to JWT.
      */
     private Map<String, Object> buildClaims(User user) {
         return Map.of(
@@ -89,6 +111,9 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    /**
+     * Standard response builder.
+     */
     private AuthResponse buildAuthResponse(User user, String jwtToken) {
         return new AuthResponse(
                 jwtToken,
