@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Handles authentication (signup/login) and email-based OTP verification.
  *
@@ -66,7 +69,7 @@ public class AuthController {
      * - No rate limiting applied (add later if needed)
      */
     @PostMapping("/send-otp")
-    public ResponseEntity<String> sendOtp(@Valid @RequestBody OtpRequest request) {
+    public ResponseEntity<Map<String, String>> sendOtp(@Valid @RequestBody OtpRequest request) {
         String email = request.getEmail();
 
         String otp = OtpUtil.generateOtp();
@@ -79,20 +82,25 @@ public class AuthController {
             emailService.sendOtp(email, otp);
         }
 
-        return ResponseEntity.ok("OTP sent");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "OTP sent");
+        response.put("status", "success");
+        return ResponseEntity.ok(response);
     }
 
     /**
      * Resends OTP with 30-second cooldown enforcement.
      */
     @PostMapping("/resend-otp")
-    public ResponseEntity<String> resendOtp(@Valid @RequestBody OtpRequest request) {
+    public ResponseEntity<Map<String, String>> resendOtp(@Valid @RequestBody OtpRequest request) {
         String email = request.getEmail();
 
         if (!otpService.canResendOtp(email)) {
             long remaining = otpService.getRemainingCooldown(email);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body("Please wait " + remaining + " seconds before requesting another OTP");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Please wait " + remaining + " seconds before requesting another OTP");
+            errorResponse.put("status", "error");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
         }
 
         String otp = OtpUtil.generateOtp();
@@ -105,7 +113,10 @@ public class AuthController {
             emailService.sendOtp(email, otp);
         }
 
-        return ResponseEntity.ok("OTP resent");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "OTP resent");
+        response.put("status", "success");
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -117,21 +128,29 @@ public class AuthController {
      * - match → success and OTP is deleted
      */
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+    public ResponseEntity<Map<String, String>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
         String email = request.getEmail();
         String otp = request.getOtp();
 
         if (otpService.isBlocked(email)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body("Too many failed attempts. Please request a new OTP.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Too many failed attempts. Please request a new OTP.");
+            errorResponse.put("status", "error");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
         }
 
         boolean success = otpService.verifyOtp(email, otp);
 
         if (!success) {
-            return ResponseEntity.badRequest().body("Invalid OTP");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid OTP");
+            errorResponse.put("status", "error");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        return ResponseEntity.ok("Verified");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Verified");
+        response.put("status", "success");
+        return ResponseEntity.ok(response);
     }
 }
