@@ -25,6 +25,12 @@ public class EmailService {
         msg.setTo(to);
         msg.setSubject("FarmSync Verification");
         msg.setText("Your OTP is: " + otp + " (valid 5 minutes)");
-        mailSender.send(msg);
+        try {
+            mailSender.send(msg);
+            logger.info("OTP sent successfully to {}", to);
+        } catch (Exception e) {
+            logger.error("Failed to send OTP to {}: {}", to, e.getMessage());
+            throw e; // Rethrow to be caught by GlobalExceptionHandler
+        }
     }
 }
