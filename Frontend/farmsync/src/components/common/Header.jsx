@@ -145,7 +145,7 @@ const Header = () => {
       </div>
 
       {/* Right side controls */}
-      <div className="ml-4 flex items-center gap-5 text-gray-300">
+      <div className="ml-4 flex items-center gap-5 text-slate-600 dark:text-gray-300">
         <button
           type="button"
           onClick={() => navigate('/notifications')}
@@ -178,15 +178,15 @@ const Header = () => {
               />
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-[10px] uppercase tracking-wider text-gray-400 group-hover:text-gray-300">
+              <span className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-gray-400 group-hover:text-emerald-500 dark:group-hover:text-gray-300">
                 Welcome back
               </span>
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-semibold text-slate-900 dark:text-white">
                 {auth?.user?.name || 'Farmer'}
               </span>
             </div>
             <FaChevronDown
-              className={`ml-1 text-xs text-gray-500 transition-transform group-hover:text-white ${
+              className={`ml-1 text-xs text-slate-500 dark:text-gray-500 transition-transform group-hover:text-emerald-500 dark:group-hover:text-white ${
                 showUserMenu ? 'rotate-180' : ''
               }`}
             />
