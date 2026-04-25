@@ -60,7 +60,7 @@ const Settings = () => {
         <article className="app-panel p-6">
           <div className="mb-5 flex items-center gap-3">
             <FaUser className="text-emerald-300" />
-            <h2 className="text-2xl font-semibold text-white">Profile</h2>
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Profile</h2>
           </div>
           <div className="grid gap-5">
             <div className="grid gap-4 md:grid-cols-2">
@@ -107,7 +107,7 @@ const Settings = () => {
         <article className="app-panel p-6">
           <div className="mb-5 flex items-center gap-3">
             <FaBell className="text-emerald-300" />
-            <h2 className="text-2xl font-semibold text-white">Notifications</h2>
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Notifications</h2>
           </div>
           <div className="space-y-3">
             {[
@@ -116,7 +116,7 @@ const Settings = () => {
               { key: 'finance', label: 'Expense summary emails' },
             ].map((item) => (
               <div key={item.key} className="app-panel-soft flex items-center justify-between p-4">
-                <span className="text-sm text-slate-200">{item.label}</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">{item.label}</span>
                 <button
                   onClick={() => setNotifications({ ...notifications, [item.key]: !notifications[item.key] })}
                   className={`relative h-7 w-12 rounded-full transition ${
@@ -140,16 +140,16 @@ const Settings = () => {
       <section className="app-panel p-6">
         <div className="mb-5 flex items-center gap-3">
           <FaMoon className="text-emerald-300" />
-          <h2 className="text-2xl font-semibold text-white">Appearance</h2>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Appearance</h2>
         </div>
         <div className="app-panel-soft flex items-center justify-between p-4">
           <div>
-            <div className="text-sm font-medium text-white">Dark mode</div>
+            <div className="text-sm font-medium text-slate-900 dark:text-white">Dark mode</div>
             <div className="mt-1 text-sm text-slate-400">Reduce eye strain with a premium dark interface.</div>
           </div>
           <button
             onClick={toggleTheme}
-            className={`relative h-7 w-12 rounded-full transition ${theme === 'dark' ? 'bg-emerald-500' : 'bg-white/10'}`}
+            className={`relative h-7 w-12 rounded-full transition ${theme === 'dark' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-white/10'}`}
             aria-label="Toggle dark mode"
           >
             <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${theme === 'dark' ? 'left-6' : 'left-1'}`} />

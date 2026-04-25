@@ -99,7 +99,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-5 text-white">
+    <div className="space-y-5 text-slate-900 dark:text-white">
       <section
         className="dashboard-hero relative overflow-hidden rounded-[30px] border border-emerald-400/10 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] md:p-7"
         style={{ backgroundImage: "url('/background.png')" }}
@@ -111,7 +111,7 @@ const Dashboard = () => {
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_18px_rgba(74,222,128,0.85)]" />
               Farm status is looking strong today
             </div>
-            <h1 className="max-w-xl text-3xl font-semibold tracking-tight text-white md:text-[3.25rem]">
+            <h1 className="max-w-xl text-3xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-[3.25rem]">
               Good Morning, <span className="text-emerald-400">Farmer!</span>
             </h1>
             <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
@@ -151,7 +151,7 @@ const Dashboard = () => {
               <p className="text-xs uppercase tracking-[0.32em] text-amber-100/70">Today&apos;s Weather</p>
               <div className="mt-4 flex items-start justify-between gap-6">
                 <div>
-                  <div className="text-5xl font-semibold tracking-tight text-white">34.0°C</div>
+                  <div className="text-5xl font-semibold tracking-tight text-slate-900 dark:text-white">34.0°C</div>
                   <p className="mt-3 max-w-[180px] text-sm leading-6 text-stone-200/80">
                     Mostly cloudy and ideal for field work
                   </p>
@@ -175,9 +175,9 @@ const Dashboard = () => {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm text-white/70">{stat.title}</p>
-                <p className="mt-2 text-3xl font-semibold tracking-tight text-white">{stat.value}</p>
-                <p className="mt-2 text-sm text-white/60">{stat.detail}</p>
+                <p className="text-sm text-slate-600 dark:text-white/70">{stat.title}</p>
+                <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">{stat.value}</p>
+                <p className="mt-2 text-sm text-slate-500 dark:text-white/60">{stat.detail}</p>
               </div>
               <div className={`rounded-full p-4 text-3xl ${stat.iconTone}`}>{stat.icon}</div>
             </div>
@@ -192,7 +192,7 @@ const Dashboard = () => {
               <div className="text-2xl text-emerald-400">
                 <LuLeaf />
               </div>
-              <h2 className="text-3xl font-semibold tracking-tight text-white">Crop Overview</h2>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">Crop Overview</h2>
             </div>
             <button
               type="button"
@@ -251,7 +251,7 @@ const Dashboard = () => {
             >
               <div className="mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-[conic-gradient(#4ade80_0_270deg,rgba(255,255,255,0.08)_270deg_360deg)] p-4">
                 <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-[#0b120f]">
-                  <div className="text-4xl font-semibold text-white">75%</div>
+                  <div className="text-4xl font-semibold text-slate-900 dark:text-white">75%</div>
                   <div className="mt-1 text-sm text-slate-300">Overall Growth</div>
                 </div>
               </div>
@@ -269,7 +269,7 @@ const Dashboard = () => {
               <div className="text-2xl text-emerald-400">
                 <LuLeaf />
               </div>
-              <h2 className="text-3xl font-semibold tracking-tight text-white">Recent Activities</h2>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">Recent Activities</h2>
             </div>
             <button
               type="button"
@@ -290,7 +290,7 @@ const Dashboard = () => {
               >
                 <div className={`rounded-2xl p-3 text-xl ${activity.tone}`}>{activity.icon}</div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-lg font-medium text-white">{activity.title}</div>
+                  <div className="truncate text-lg font-medium text-slate-900 dark:text-white">{activity.title}</div>
                   <div className="mt-1 text-sm text-slate-400">{activity.meta}</div>
                 </div>
                 <FaChevronRight className="text-slate-500" />
@@ -311,7 +311,7 @@ const Dashboard = () => {
             <div className={`mb-4 text-3xl ${card.tone}`}>{card.icon}</div>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-lg font-medium text-white">{card.title}</p>
+                <p className="text-lg font-medium text-slate-900 dark:text-white">{card.title}</p>
                 <p className={`mt-2 text-xl font-semibold ${card.tone}`}>{card.primary}</p>
                 <p className="mt-1 text-sm text-slate-400">{card.secondary}</p>
               </div>
@@ -336,7 +336,7 @@ const Dashboard = () => {
             </div>
             <span className="rounded-full bg-lime-400/15 px-3 py-1 text-xs font-medium text-lime-300">Beta</span>
           </div>
-          <h3 className="text-2xl font-semibold text-white">AI Farm Assistant</h3>
+          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">AI Farm Assistant</h3>
           <p className="mt-3 text-sm leading-7 text-emerald-50/75">
             Based on weather and soil data, consider irrigating your wheat field tomorrow evening for best results.
           </p>

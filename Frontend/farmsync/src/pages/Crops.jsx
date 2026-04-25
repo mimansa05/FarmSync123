@@ -257,7 +257,7 @@ const Crops = () => {
               </div>
 
               <div className="mt-4">
-                <h2 className="text-xl font-bold text-white">{crop.cropName}</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{crop.cropName}</h2>
               </div>
             </article>
           ))

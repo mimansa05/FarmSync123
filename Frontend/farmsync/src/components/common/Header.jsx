@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { FaBell, FaChevronDown, FaSearch, FaSignOutAlt } from 'react-icons/fa';
+import { FaBell, FaChevronDown, FaSearch, FaSignOutAlt, FaSun, FaMoon } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
  * Global Search Configuration
@@ -34,6 +35,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { auth, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   /** @type {string} Current value of the search input bar */
   const [query, setQuery] = useState('');
@@ -104,7 +106,7 @@ const Header = () => {
       <div className="relative w-full max-w-[420px]">
         <form
           onSubmit={onSubmit}
-          className="flex w-full items-center rounded-2xl border border-white/8 bg-white/4 px-4 py-2.5 text-sm transition-colors focus-within:border-emerald-500/50"
+          className="flex w-full items-center rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/8 dark:bg-white/4 px-4 py-2.5 text-sm transition-colors focus-within:border-emerald-500/50"
         >
           <FaSearch className="mr-3 text-gray-400" />
           <input
@@ -119,21 +121,21 @@ const Header = () => {
               window.setTimeout(() => setShowResults(false), 120);
             }}
             placeholder="Search anything..."
-            className="w-full bg-transparent text-gray-300 placeholder-gray-500 outline-none"
+            className="w-full bg-transparent text-slate-700 dark:text-gray-300 placeholder-slate-400 dark:placeholder-gray-500 outline-none"
           />
         </form>
 
         {showResults && results.length > 0 && (
-          <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-30 overflow-hidden rounded-2xl border border-white/8 bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
+          <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-30 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/8 dark:bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
             {results.slice(0, 6).map((item) => (
               <button
                 key={`${item.route}-${item.label}`}
                 type="button"
                 onMouseDown={() => goToItem(item)}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-white/5"
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm text-slate-700 dark:text-slate-200 transition hover:bg-slate-100 dark:hover:bg-white/5"
               >
                 <span>{item.label}</span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-400 dark:text-slate-500">
                   {item.route === '/' ? 'Dashboard' : item.route.replace('/', '')}
                 </span>
               </button>
@@ -147,17 +149,26 @@ const Header = () => {
         <button
           type="button"
           onClick={() => navigate('/notifications')}
-          className="relative rounded-2xl border border-white/8 bg-white/4 p-3 transition-colors hover:text-white"
+          className="relative rounded-2xl border border-slate-200 bg-slate-100 p-3 text-slate-600 transition-colors hover:text-emerald-600 dark:border-white/8 dark:bg-white/4 dark:text-gray-300 dark:hover:text-white"
         >
           <FaBell className="text-lg" />
           <span className="absolute right-0 top-0 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-transparent" />
+        </button>
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="rounded-2xl border border-slate-200 bg-slate-100 p-3 text-slate-600 transition-colors hover:text-emerald-600 dark:border-white/8 dark:bg-white/4 dark:text-gray-300 dark:hover:text-white"
+          aria-label="Toggle Theme"
+        >
+          {theme === 'dark' ? <FaSun className="text-lg" /> : <FaMoon className="text-lg" />}
         </button>
 
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowUserMenu((prev) => !prev)}
-            className="group flex items-center gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2.5"
+            className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/8 dark:bg-white/4 px-3 py-2.5"
           >
             <div className="h-10 w-10 overflow-hidden rounded-full border border-white/10 bg-gray-800">
               <img
@@ -182,9 +193,9 @@ const Header = () => {
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-56 overflow-hidden rounded-2xl border border-white/8 bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
-              <div className="border-b border-white/8 px-3 py-3 mb-2">
-                <p className="text-sm font-semibold text-white">
+            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/8 dark:bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
+              <div className="border-b border-slate-100 dark:border-white/8 px-3 py-3 mb-2">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">
                   {auth?.user?.name}
                 </p>
                 <p className="text-xs text-slate-400 truncate mt-1">
@@ -201,7 +212,7 @@ const Header = () => {
                   setShowUserMenu(false);
                   navigate('/settings');
                 }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-200 transition hover:bg-white/5"
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-200 transition hover:bg-slate-100 dark:hover:bg-white/5"
               >
                 Settings
               </button>
