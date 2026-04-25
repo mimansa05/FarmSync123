@@ -28,7 +28,7 @@ export const ThemeProvider = ({ children }) => {
    * and saves the preference.
    */
   useEffect(() => {
-    const root = window.document.body;
+    const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
