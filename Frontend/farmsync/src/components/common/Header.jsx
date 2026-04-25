@@ -4,52 +4,26 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
-/**
- * Global Search Configuration
- * Defines searchable navigation items throughout the application.
- */
 const searchItems = [
   { label: 'Dashboard', keywords: ['dashboard', 'home', 'overview'], route: '/' },
-  { label: 'Crop Overview', keywords: ['crop overview', 'chart', 'growth'], route: '/', hash: '#crop-overview' },
-  { label: 'Recent Activities', keywords: ['recent activities', 'activity', 'timeline'], route: '/', hash: '#recent-activities' },
-  { label: 'AI Farm Assistant', keywords: ['ai', 'assistant', 'suggestion'], route: '/ai-assistant' },
   { label: 'Crops', keywords: ['crops', 'crop', 'field'], route: '/crops' },
-  { label: 'Expenses', keywords: ['expenses', 'expense', 'spending', 'finance'], route: '/expenses' },
+  { label: 'Expenses', keywords: ['expenses', 'expense', 'finance'], route: '/expenses' },
   { label: 'Activities', keywords: ['activities', 'activity', 'log'], route: '/activities' },
-  { label: 'Reports', keywords: ['reports', 'analytics', 'trends'], route: '/reports' },
-  { label: 'Weather', keywords: ['weather', 'forecast', 'temperature'], route: '/weather' },
-  { label: 'Notifications', keywords: ['notification', 'notifications', 'alerts', 'bell'], route: '/notifications' },
-  { label: 'Contact Us', keywords: ['contact', 'help', 'support'], route: '/contact-us' },
-  { label: 'Settings', keywords: ['settings', 'profile', 'notifications'], route: '/settings' },
+  { label: 'Reports', keywords: ['reports', 'analytics'], route: '/reports' },
+  { label: 'Weather', keywords: ['weather', 'forecast'], route: '/weather' },
+  { label: 'Settings', keywords: ['settings', 'profile'], route: '/settings' },
 ];
 
-/**
- * Header Component
- * 
- * The top navigation bar containing global search, notification alerts,
- * and user profile/account settings.
- * 
- * @returns {JSX.Element} The rendered Header component
- */
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { auth, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
-  /** @type {string} Current value of the search input bar */
   const [query, setQuery] = useState('');
-
-  /** @type {boolean} Toggle for showing the real-time search results dropdown */
   const [showResults, setShowResults] = useState(false);
-
-  /** @type {boolean} Toggle for showing the user account menu */
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  /**
-   * useMemo - Search Result Filtering
-   * Filters the searchItems based on the current query string.
-   */
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return searchItems.slice(0, 5);
@@ -59,168 +33,96 @@ const Header = () => {
     });
   }, [query]);
 
-  /**
-   * Navigates to a specific search result item.
-   * Handles both internal routing and intra-page hash navigation.
-   * 
-   * @param {Object} item - The search result item to navigate to
-   */
   const goToItem = (item) => {
     setQuery(item.label);
     setShowResults(false);
-
-    if (location.pathname === item.route) {
-      if (item.hash) {
-        const target = document.querySelector(item.hash);
-        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      return;
-    }
-
-    navigate(`${item.route}${item.hash || ''}`);
+    navigate(item.route);
   };
 
-  /**
-   * Handles form submission for the search bar, navigating to the primary result.
-   */
-  const onSubmit = (event) => {
-    event.preventDefault();
-    const match = results[0];
-    if (match) goToItem(match);
-  };
-
-  /**
-   * Clears session data and redirects the user to the login page.
-   */
   const handleLogout = () => {
-    setShowUserMenu(false);
     logout();
     navigate('/login');
   };
 
   return (
-    <header className="sticky top-0 z-20 flex w-full items-center justify-between bg-transparent px-4 py-4 backdrop-blur-sm md:px-6 xl:px-7">
-      {/* Search bar section */}
+    <header className="sticky top-0 z-20 flex w-full items-center justify-between px-4 py-4 backdrop-blur-md md:px-6 xl:px-7 bg-[var(--header-bg)] border-b border-[var(--border-color)]">
       <div className="relative w-full max-w-[420px]">
         <form
-          onSubmit={onSubmit}
-          className="flex w-full items-center rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/8 dark:bg-white/4 px-4 py-2.5 text-sm transition-colors focus-within:border-emerald-500/50"
+          onSubmit={(e) => e.preventDefault()}
+          className="flex w-full items-center rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] px-4 py-2 text-sm transition-all focus-within:border-[var(--accent-color)] focus-within:ring-2 focus-within:ring-[var(--accent-color)]/10"
         >
-          <FaSearch className="mr-3 text-gray-400" />
+          <FaSearch className="mr-3 text-[var(--text-muted)]" />
           <input
             type="text"
             value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
+            onChange={(e) => {
+              setQuery(e.target.value);
               setShowResults(true);
             }}
-            onFocus={() => setShowResults(true)}
-            onBlur={() => {
-              window.setTimeout(() => setShowResults(false), 120);
-            }}
             placeholder="Search anything..."
-            className="w-full bg-transparent text-slate-700 dark:text-gray-300 placeholder-slate-400 dark:placeholder-gray-500 outline-none"
+            className="w-full bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none"
           />
         </form>
 
-        {showResults && results.length > 0 && (
-          <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-30 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/8 dark:bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
-            {results.slice(0, 6).map((item) => (
+        {showResults && query && (
+          <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-30 overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-2 shadow-2xl">
+            {results.map((item) => (
               <button
-                key={`${item.route}-${item.label}`}
-                type="button"
+                key={item.label}
                 onMouseDown={() => goToItem(item)}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm text-slate-700 dark:text-slate-200 transition hover:bg-slate-100 dark:hover:bg-white/5"
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
               >
                 <span>{item.label}</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500">
-                  {item.route === '/' ? 'Dashboard' : item.route.replace('/', '')}
-                </span>
               </button>
             ))}
           </div>
         )}
       </div>
 
-      {/* Right side controls */}
-      <div className="ml-4 flex items-center gap-5 text-slate-600 dark:text-gray-300">
+      <div className="ml-4 flex items-center gap-4">
         <button
-          type="button"
           onClick={() => navigate('/notifications')}
-          className="relative rounded-2xl border border-slate-200 bg-slate-100 p-3 text-slate-600 transition-colors hover:text-emerald-600 dark:border-white/8 dark:bg-white/4 dark:text-gray-300 dark:hover:text-white"
+          className="relative rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-2.5 text-[var(--text-primary)] transition-all hover:bg-[var(--bg-primary)] hover:scale-105 active:scale-95"
+          aria-label="Notifications"
         >
-          <FaBell className="text-lg" />
-          <span className="absolute right-0 top-0 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-transparent" />
+          <FaBell className="text-xl" />
+          <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-[var(--bg-secondary)]" />
         </button>
 
         <button
-          type="button"
           onClick={toggleTheme}
-          className="rounded-2xl border border-slate-200 bg-slate-100 p-3 text-slate-600 transition-colors hover:text-emerald-600 dark:border-white/8 dark:bg-white/4 dark:text-gray-300 dark:hover:text-white"
+          className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-2.5 text-[var(--text-primary)] transition-all hover:bg-[var(--bg-primary)] hover:scale-105 active:scale-95"
           aria-label="Toggle Theme"
         >
-          {theme === 'dark' ? <FaSun className="text-lg" /> : <FaMoon className="text-lg" />}
+          {theme === 'dark' ? <FaSun className="text-xl" /> : <FaMoon className="text-xl" />}
         </button>
 
         <div className="relative">
           <button
-            type="button"
-            onClick={() => setShowUserMenu((prev) => !prev)}
-            className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/8 dark:bg-white/4 px-3 py-2.5"
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center gap-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] px-3 py-2 transition-all hover:bg-[var(--bg-primary)] hover:border-[var(--accent-color)]"
           >
-            <div className="h-10 w-10 overflow-hidden rounded-full border border-white/10 bg-gray-800">
-              <img
-                src="https://i.pravatar.cc/150?img=11"
-                alt="Farmer Profile"
-                className="h-full w-full object-cover"
-              />
+            <div className="h-9 w-9 overflow-hidden rounded-full border border-[var(--border-color)]">
+              <img src="https://i.pravatar.cc/150?img=11" alt="Profile" className="h-full w-full object-cover" />
             </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] uppercase tracking-wider text-slate-600 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
-                Welcome back
-              </span>
-              <span className="text-sm font-semibold text-black dark:text-white">
-                {auth?.user?.name || 'Farmer'}
-              </span>
+            <div className="hidden flex-col text-left md:flex">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Welcome back</span>
+              <span className="text-sm font-bold text-[var(--text-primary)]">{auth?.user?.name || 'Farmer'}</span>
             </div>
-            <FaChevronDown
-              className={`ml-1 text-xs text-slate-600 dark:text-gray-500 transition-transform group-hover:text-emerald-600 dark:group-hover:text-white ${
-                showUserMenu ? 'rotate-180' : ''
-              }`}
-            />
+            <FaChevronDown className={`text-xs text-[var(--text-muted)] transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/8 dark:bg-[#101814]/95 p-2 shadow-2xl backdrop-blur-xl">
-              <div className="border-b border-slate-100 dark:border-white/8 px-3 py-3 mb-2">
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                  {auth?.user?.name}
-                </p>
-                <p className="text-xs text-slate-400 truncate mt-1">
-                  {auth?.user?.email}
-                </p>
-                <span className="mt-2 inline-block rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-                  {auth?.user?.role}
-                </span>
-              </div>
-
+            <div className="absolute right-0 top-[calc(100%+10px)] z-30 w-52 overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
               <button
-                type="button"
-                onClick={() => {
-                  setShowUserMenu(false);
-                  navigate('/settings');
-                }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-700 dark:text-slate-200 transition hover:bg-slate-100 dark:hover:bg-white/5"
+                onClick={() => { setShowUserMenu(false); navigate('/settings'); }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
               >
                 Settings
               </button>
-
               <button
-                type="button"
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-300 transition hover:bg-red-500/10"
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
               >
                 <FaSignOutAlt />
                 Logout
@@ -234,4 +136,3 @@ const Header = () => {
 };
 
 export default Header;
-

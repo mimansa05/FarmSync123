@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaBell, FaMoon, FaUser } from 'react-icons/fa';
+import { FaBell, FaMoon, FaSun, FaUser } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useFarm } from '../context/FarmContext';
 
@@ -37,7 +37,6 @@ const Settings = () => {
     }
   };
 
-  /** @type {Object} Local state for notification toggles */
   const [notifications, setNotifications] = useState({
     weather: true,
     activity: true,
@@ -45,9 +44,8 @@ const Settings = () => {
   });
 
   return (
-    <div className="space-y-5">
-      {/* --- Intro Section --- */}
-      <section className="app-panel p-6 md:p-7">
+    <div className="space-y-6">
+      <section className="app-panel p-6 md:p-8">
         <div className="micro-label">Preferences</div>
         <h1 className="page-title mt-2">Personalize your FarmSync experience</h1>
         <p className="page-subtitle mt-3 max-w-2xl">
@@ -55,27 +53,26 @@ const Settings = () => {
         </p>
       </section>
 
-      {/* --- Profile & Notifications --- */}
-      <section className="grid gap-5 xl:grid-cols-[1fr_1fr]">
+      <section className="grid gap-6 xl:grid-cols-2">
         <article className="app-panel p-6">
-          <div className="mb-5 flex items-center gap-3">
-            <FaUser className="text-emerald-300" />
-            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Profile</h2>
+          <div className="mb-6 flex items-center gap-3">
+            <FaUser className="text-[var(--accent-color)] text-xl" />
+            <h2 className="text-xl font-bold">Profile Settings</h2>
           </div>
-          <div className="grid gap-5">
+          <div className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Display Name</label>
-                <input className="app-input" defaultValue="Farmer" placeholder="Display name" readOnly />
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1">Display Name</label>
+                <input className="app-input" defaultValue="Farmer" readOnly />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Email Address</label>
-                <input className="app-input" defaultValue="farmer@farmsync.com" placeholder="Email" readOnly />
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1">Email Address</label>
+                <input className="app-input" defaultValue="farmer@farmsync.com" readOnly />
               </div>
             </div>
             
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Farm Name</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1">Farm Name</label>
               <input 
                 className="app-input" 
                 value={farmData.farmName} 
@@ -84,8 +81,8 @@ const Settings = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1">Location</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1">Location</label>
               <input 
                 className="app-input" 
                 value={farmData.location} 
@@ -97,63 +94,61 @@ const Settings = () => {
             <button 
               onClick={handleSave}
               disabled={isSaving}
-              className="app-button-primary mt-2"
+              className="app-button-primary w-full mt-4 py-3"
             >
-              {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
+              {isSaving ? 'Saving...' : saveSuccess ? 'Changes Saved!' : 'Save Profile Changes'}
             </button>
           </div>
         </article>
 
-        <article className="app-panel p-6">
-          <div className="mb-5 flex items-center gap-3">
-            <FaBell className="text-emerald-300" />
-            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Notifications</h2>
-          </div>
-          <div className="space-y-3">
-            {[
-              { key: 'weather', label: 'Weather alerts' },
-              { key: 'activity', label: 'Field activity reminders' },
-              { key: 'finance', label: 'Expense summary emails' },
-            ].map((item) => (
-              <div key={item.key} className="app-panel-soft flex items-center justify-between p-4">
-                <span className="text-sm text-slate-700 dark:text-slate-200">{item.label}</span>
-                <button
-                  onClick={() => setNotifications({ ...notifications, [item.key]: !notifications[item.key] })}
-                  className={`relative h-7 w-12 rounded-full transition ${
-                    notifications[item.key] ? 'bg-emerald-500' : 'bg-white/10'
-                  }`}
-                  aria-label={`Toggle ${item.label}`}
-                >
-                  <span
-                    className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
-                      notifications[item.key] ? 'left-6' : 'left-1'
-                    }`}
-                  />
-                </button>
+        <div className="space-y-6">
+          <article className="app-panel p-6">
+            <div className="mb-6 flex items-center gap-3">
+              <FaMoon className="text-[var(--accent-color)] text-xl" />
+              <h2 className="text-xl font-bold">Appearance</h2>
+            </div>
+            <div className="app-panel-soft flex items-center justify-between p-4 border border-[var(--border-color)]">
+              <div>
+                <div className="font-bold text-[var(--text-primary)]">Dark Mode</div>
+                <div className="text-sm text-[var(--text-secondary)]">Enable a darker interface to reduce eye strain.</div>
               </div>
-            ))}
-          </div>
-        </article>
-      </section>
+              <button
+                onClick={toggleTheme}
+                className={`relative h-8 w-14 rounded-full transition-colors duration-300 ${theme === 'dark' ? 'bg-[var(--accent-color)]' : 'bg-[var(--border-color)]'}`}
+                aria-label="Toggle Dark Mode"
+              >
+                <div className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow-md transition-all duration-300 flex items-center justify-center ${theme === 'dark' ? 'left-7' : 'left-1'}`}>
+                  {theme === 'dark' ? <FaMoon className="text-[10px] text-[var(--accent-color)]" /> : <FaSun className="text-[10px] text-orange-400" />}
+                </div>
+              </button>
+            </div>
+          </article>
 
-      {/* --- Theme Settings --- */}
-      <section className="app-panel p-6">
-        <div className="mb-5 flex items-center gap-3">
-          <FaMoon className="text-emerald-300" />
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Appearance</h2>
-        </div>
-        <div className="app-panel-soft flex items-center justify-between p-4">
-          <div>
-            <div className="text-sm font-medium text-slate-900 dark:text-white">Dark mode</div>
-            <div className="mt-1 text-sm text-slate-400">Reduce eye strain with a premium dark interface.</div>
-          </div>
-          <button
-            onClick={toggleTheme}
-            className={`relative h-7 w-12 rounded-full transition ${theme === 'dark' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-white/10'}`}
-            aria-label="Toggle dark mode"
-          >
-            <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${theme === 'dark' ? 'left-6' : 'left-1'}`} />
-          </button>
+          <article className="app-panel p-6">
+            <div className="mb-6 flex items-center gap-3">
+              <FaBell className="text-[var(--accent-color)] text-xl" />
+              <h2 className="text-xl font-bold">Notifications</h2>
+            </div>
+            <div className="space-y-3">
+              {[
+                { key: 'weather', label: 'Weather Alerts' },
+                { key: 'activity', label: 'Field Reminders' },
+                { key: 'finance', label: 'Expense Reports' },
+              ].map((item) => (
+                <div key={item.key} className="app-panel-soft flex items-center justify-between p-4 border border-[var(--border-color)]">
+                  <span className="text-sm font-medium">{item.label}</span>
+                  <button
+                    onClick={() => setNotifications({ ...notifications, [item.key]: !notifications[item.key] })}
+                    className={`relative h-6 w-11 rounded-full transition-colors ${
+                      notifications[item.key] ? 'bg-[var(--accent-color)]' : 'bg-[var(--border-color)]'
+                    }`}
+                  >
+                    <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${notifications[item.key] ? 'left-6' : 'left-1'}`} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </article>
         </div>
       </section>
     </div>
@@ -161,4 +156,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
