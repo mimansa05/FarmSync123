@@ -1,20 +1,15 @@
 import React from 'react';
 import {
-  FaArrowRight,
   FaBarsProgress,
   FaBottleWater,
   FaCalendarDays,
   FaChevronRight,
   FaCloudSun,
   FaMoneyBillWave,
-  FaRobot,
   FaSprayCanSparkles,
-  FaSun,
   FaTractor,
-  FaSeedling,
 } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import { GiPlantRoots, GiWheat } from 'react-icons/gi';
 import { LuLeaf } from 'react-icons/lu';
 
 const Dashboard = () => {
