@@ -16,7 +16,6 @@ const searchItems = [
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { auth, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 

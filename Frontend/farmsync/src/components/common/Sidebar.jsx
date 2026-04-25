@@ -15,7 +15,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
-  const { auth, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const menuItems = [
