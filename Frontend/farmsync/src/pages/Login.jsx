@@ -31,10 +31,11 @@ const Login = () => {
 
   return (
     <div
-      className="main-content flex justify-center items-center px-4 dashboard-hero"
+      className="flex min-h-screen w-full items-center justify-center px-4 dashboard-hero"
       style={{ backgroundImage: "url('/background.png')" }}
     >
-      <div className="app-panel w-full max-w-md p-8">
+      <div className="dashboard-hero-overlay absolute inset-0" />
+      <div className="app-panel relative z-10 w-full max-w-md p-8 bg-[var(--bg-secondary)]">
 
         <div className="text-center mb-6">
           <div className="mx-auto w-fit p-4 rounded-full bg-emerald-500/10 text-emerald-400 text-3xl">
@@ -77,7 +78,7 @@ const Login = () => {
             />
             <span
               onClick={() => setShow(!show)}
-              className="absolute right-3 top-10 cursor-pointer text-slate-400 hover:text-white"
+              className="absolute right-3 top-10 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             >
               {show ? <FaEyeSlash /> : <FaEye />}
             </span>
@@ -93,11 +94,11 @@ const Login = () => {
 
         </form>
 
-        <p className="text-center text-sm text-slate-400 mt-5">
+        <p className="text-center text-sm text-[var(--text-secondary)] mt-5">
           Don't have an account?{' '}
           <span
             onClick={() => navigate('/register')}
-            className="text-emerald-400 cursor-pointer hover:underline"
+            className="text-[var(--accent-color)] font-bold cursor-pointer hover:underline"
           >
             Register
           </span>

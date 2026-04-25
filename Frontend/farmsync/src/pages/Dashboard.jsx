@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  FaArrowRight,
   FaBarsProgress,
   FaBottleWater,
   FaCalendarDays,
@@ -15,18 +16,13 @@ import { LuLeaf } from 'react-icons/lu';
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const scrollToSection = (id) => {
-    const target = document.querySelector(id);
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   const stats = [
     {
       title: 'Total Crops',
       value: '12',
       detail: 'All time crops',
       icon: <LuLeaf />,
-      color: 'var(--accent-color)',
+      color: '#22c55e',
       bg: 'rgba(34, 197, 94, 0.1)',
       onClick: () => navigate('/crops'),
     },
@@ -68,30 +64,39 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[var(--accent-color)] to-[var(--accent-hover)] p-8 text-white shadow-2xl">
-        <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+      {/* Hero Section with Background Image */}
+      <section 
+        className="dashboard-hero relative overflow-hidden rounded-[32px] p-8 text-white shadow-2xl min-h-[400px] flex items-center"
+        style={{ backgroundImage: "url('/background.png')" }}
+      >
+        <div className="dashboard-hero-overlay absolute inset-0 rounded-[32px]" />
+        
+        <div className="relative z-10 w-full flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm font-bold backdrop-blur-md">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-4 py-2 text-sm font-bold backdrop-blur-md border border-emerald-500/30">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
               Farm status is looking strong today
             </div>
-            <h1 className="text-4xl font-black tracking-tight md:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-black tracking-tight md:text-5xl lg:text-6xl text-white">
               Good Morning, <br />
-              <span className="opacity-90">Farmer!</span>
+              <span className="text-emerald-400">Farmer!</span>
             </h1>
-            <p className="mt-6 text-lg font-medium opacity-90 leading-relaxed max-w-xl">
+            <p className="mt-6 text-lg font-medium opacity-90 leading-relaxed max-w-xl text-slate-100">
               Your fields are healthy and growth is on track. Here's a quick overview of your farm's performance today.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <button
-                onClick={() => scrollToSection('#crop-overview')}
-                className="rounded-2xl bg-white px-6 py-3.5 text-sm font-bold text-[var(--accent-color)] shadow-xl transition-all hover:scale-105 active:scale-95"
+                onClick={() => {
+                  const target = document.querySelector('#crop-overview');
+                  target?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="rounded-2xl bg-emerald-500 px-6 py-3.5 text-sm font-bold text-white shadow-xl shadow-emerald-500/30 transition-all hover:bg-emerald-400 hover:scale-105 active:scale-95 flex items-center gap-2"
               >
-                View Farm Overview
+                View Farm Overview <FaArrowRight />
               </button>
               <button
                 onClick={() => navigate('/activities')}
-                className="rounded-2xl bg-white/20 px-6 py-3.5 text-sm font-bold backdrop-blur-md transition-all hover:bg-white/30"
+                className="rounded-2xl bg-white/10 px-6 py-3.5 text-sm font-bold backdrop-blur-md border border-white/20 transition-all hover:bg-white/20"
               >
                 Add Activity +
               </button>
@@ -99,26 +104,27 @@ const Dashboard = () => {
           </div>
 
           <div className="lg:w-80">
-            <div className="rounded-3xl bg-white/10 p-6 backdrop-blur-xl border border-white/20">
+            <div className="rounded-3xl bg-black/40 p-6 backdrop-blur-xl border border-white/10">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black uppercase tracking-[0.2em] opacity-80">Local Weather</span>
-                <FaCloudSun className="text-3xl" />
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400">Local Weather</span>
+                <FaCloudSun className="text-3xl text-emerald-400" />
               </div>
               <div className="mt-6">
-                <div className="text-5xl font-black">34.0°C</div>
-                <p className="mt-2 text-sm font-medium opacity-80">Mostly sunny, perfect for harvest.</p>
+                <div className="text-5xl font-black text-white">34.0°C</div>
+                <p className="mt-2 text-sm font-medium text-slate-300">Mostly sunny, perfect for harvest.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Stats Grid */}
       <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <button
             key={stat.title}
             onClick={stat.onClick}
-            className="app-panel group flex items-center justify-between p-6 transition-all hover:border-[var(--accent-color)] hover:scale-[1.02]"
+            className="app-panel group flex items-center justify-between p-6 transition-all hover:border-[var(--accent-color)] hover:scale-[1.02] bg-[var(--bg-secondary)]"
           >
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">{stat.title}</p>
@@ -135,20 +141,21 @@ const Dashboard = () => {
         ))}
       </section>
 
+      {/* Main Content Grid */}
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <article id="crop-overview" className="app-panel p-6">
+        <article id="crop-overview" className="app-panel p-6 bg-[var(--bg-secondary)]">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Crop Performance</h2>
-            <button className="text-sm font-bold text-[var(--accent-color)] hover:underline">View Analytics</button>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)]">Crop Performance</h2>
+            <button onClick={() => navigate('/reports')} className="text-sm font-bold text-[var(--accent-color)] hover:underline">View Analytics</button>
           </div>
           <div className="h-64 w-full rounded-2xl bg-[var(--bg-primary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-muted)] italic">
             Performance chart visualization would go here
           </div>
         </article>
 
-        <article className="app-panel p-6">
+        <article className="app-panel p-6 bg-[var(--bg-secondary)]">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Recent Activities</h2>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)]">Recent Activities</h2>
             <button onClick={() => navigate('/activities')} className="text-sm font-bold text-[var(--accent-color)] hover:underline">See All</button>
           </div>
           <div className="space-y-3">
