@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { FaBell, FaChevronDown, FaSearch, FaSignOutAlt, FaSun, FaMoon } from 'react-icons/fa';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
